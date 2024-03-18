@@ -1,19 +1,19 @@
 ;
 ;	File 'topol.top' was generated
 ;	By user: lorien (1000)
-;	On host: lorien-desktop
-;	At date: Wed Feb 10 18:44:36 2021
+;	On host: lorien-Latitude-7490
+;	At date: Mon Mar 18 13:13:21 2024
 ;
 ;	This is a standalone topology file
 ;
 ;	Created by:
-;	                     :-) GROMACS - gmx pdb2gmx, 2021 (-:
+;	            :-) GROMACS - gmx pdb2gmx, 2021 (double precision) (-:
 ;	
-;	Executable:   /usr/local/gromacs/bin/gmx
-;	Data prefix:  /usr/local/gromacs
-;	Working dir:  /home/lorien/Repos/TFG/GROMACS
+;	Executable:   /home/lorien/Repos/PPAM2024/lysozyme/../bin_double_gcc/bin/gmx_d
+;	Data prefix:  /home/lorien/Repos/PPAM2024/lysozyme/../bin_double_gcc
+;	Working dir:  /home/lorien/Repos/PPAM2024/lysozyme/1AKI_clean_16
 ;	Command line:
-;	  gmx pdb2gmx -f ../proteins/GROMACS/1AKI_clean.pdb -o ../proteins/GROMACS/1AKI_processed.gro -water spce
+;	  gmx_d pdb2gmx -f ../1AKI_clean.pdb -o 1AKI_clean_processed.gro -water spce
 ;	Force field was read from the standard GROMACS share directory.
 ;
 

@@ -1,9 +1,10 @@
 #!/bin/bash
 
-NTHREADS=8
-SIM_TIME=100 # Simulation time in picoseconds
-TIME_STEPS=(4 2 1 0.5 0.25 0.125 0.0625) # In femtoseconds
-TOLS=(0.000000000001)
+NTHREADS=1 # 1 thread produces the most reproducible results
+SIM_TIME=1 # Simulation time in picoseconds
+# Number of steps to simulate (time-step = SIM_TIME / NSTEPS)
+NSTEPS=(250 500 1000 1100 1200 1300 1400 1500 1600 1700 1800 1900 2000 4000 8000 16000)
+TOLS=(0.0001 0.000000000001)
 
 PROT="lysozyme"
 
@@ -13,12 +14,13 @@ SCRIPT_DIR=$(cd -- "$( dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
 
 GMX="$SCRIPT_DIR/bin_double_gcc/bin/gmx_d"
 
+# Each subfolder of $SIM_DIR is a different force field.
 SIM_DIR="$SCRIPT_DIR/$PROT"
 
-NPTGRO="$SIM_DIR/equil3.gro"
-NPTCPT="$SIM_DIR/state.cpt"
-TOPOLTOP="$SIM_DIR/topol.top"
-MDMDP="$SIM_DIR/prod.mdp"
+NPTGRO="npt.gro"
+NPTCPT="npt.cpt"
+TOPOLTOP="topol.top"
+MDMDP="prod.mdp"
 
 export  GMX_MAXBACKUP=-1
 
@@ -27,8 +29,8 @@ export  GMX_MAXBACKUP=-1
 run_solver() {
     tpr="$1"
 
-    $GMX mdrun -ntmpi 1 -ntomp $NTHREADS -reprod -s "$tpr" -noconfout \
-               -g gromacs.log 1>out.out 2>err.err
+    $GMX mdrun -ntmpi 1 -ntomp $NTHREADS -reprod -s "$tpr" 1>out.out 2>err.err
+    # $GMX dump -f traj.trr > traj.trr.dump 2> traj.trr.dump.err
 }
 
 # Generate mdp file based on an old mdp file and a string of parameters.
@@ -65,45 +67,60 @@ generate_mdp() {
 # $3 = new tpr file
 # $4 = new parameters
 generate_tpr() {
-    old_mdp="$1"
-    new_mdp="$2"
-    new_tpr="$3"
-    new_parameters="$4"
+    nptgro="$1"
+    nptcpt="$2"
+    topoltop="$3"
+    old_mdp="$4"
+    new_mdp="$5"
+    new_tpr="$6"
+    new_parameters="$7"
 
     generate_mdp "$old_mdp" "$new_mdp" "$new_parameters"
 
     # Create the tpr file
-    $GMX grompp -f "$new_mdp" -c "$NPTGRO" -r "$NPTGRO" -t "$NPTCPT" \
-                -p "$TOPOLTOP" -o "$new_tpr" &> "$new_tpr.txt"
+    $GMX grompp -f "$new_mdp" -c "$nptgro" -r "$nptgro" -t "$nptcpt" \
+                -p "$topoltop" -o "$new_tpr" &> "$new_tpr.txt"
 }
 
-for tol in ${TOLS[@]}; do
-    for ts in ${TIME_STEPS[@]}; do
-        ts_ps=$(bc <<<"scale=6; $ts / 1000")
-        nsteps=$(bc <<<"scale=0; $SIM_TIME / $ts_ps")
+for ff in $(ls -d $SIM_DIR/*/); do
+    ff="$(basename $ff)"
+    sim_dir="$SIM_DIR/$ff"
+    for tol in ${TOLS[@]}; do
+        for nsteps in ${NSTEPS[@]}; do
+            # Compute ts and remove trailing zeros
+            ts=$(bc <<<"scale=16; $SIM_TIME / $nsteps" | sed '/\./ s/\.\{0,1\}0\{1,\}$//')
 
-        echo -n "Tolerance: $tol | Time step: $ts_ps ps | "
-        echo "Simulated time: $SIM_TIME ps | Number of steps: $nsteps"
+            res_dir="${RESULTS_DIR}/$ff/tol${tol}/ts${ts}"
+            mkdir -p "$res_dir"
+            pushd "$res_dir" &>/dev/null
 
-        sim_folder="${RESULTS_DIR}/tol${tol}ts${ts}"
-        mkdir -p "$sim_folder"
-        pushd "$sim_folder" &>/dev/null
+            echo -n "Simulation: $res_dir | Tolerance: $tol | Time step: $ts ps | "
+            echo "Simulated time: $SIM_TIME ps | Number of steps: $nsteps"
 
-        echo "Generating tpr..."
+            echo "Generating tpr..."
 
-        shake_mdp="shake.mdp"
-        shake_tpr="shake.tpr"
+            shake_mdp="shake.mdp"
+            shake_tpr="shake.tpr"
 
-        generate_tpr "$MDMDP" "$shake_mdp" "$shake_tpr" \
-                     "constraint-algorithm=shake
-                      shake-tol=${tol}
-                      nsteps=${nsteps}
-                      dt=${ts_ps}"
+            nptgro="$sim_dir/$NPTGRO"
+            nptcpt="$sim_dir/$NPTCPT"
+            topoltop="$sim_dir/$TOPOLTOP"
+            mdmdp="$SIM_DIR/$MDMDP"
 
-        echo "Running simulation..."
+            generate_tpr "$nptgro" "$nptcpt" "$topoltop" "$mdmdp" "$shake_mdp" "$shake_tpr" \
+                         "constraint-algorithm=shake
+                          shake-tol=${tol}
+                          nsteps=${nsteps}
+                          dt=${ts}
+                          nstxout=$nsteps
+                          nstvout=$nsteps
+                          nstfout=$nsteps"
 
-        run_solver "$shake_tpr"
+            echo "Running simulation..."
 
-        popd &>/dev/null # sim folder
+            run_solver "$shake_tpr"
+
+            popd &>/dev/null # sim folder
+        done
     done
 done
