@@ -30,7 +30,21 @@ run_solver() {
     tpr="$1"
 
     $GMX mdrun -ntmpi 1 -ntomp $NTHREADS -reprod -s "$tpr" 1>out.out 2>err.err
-    # $GMX dump -f traj.trr > traj.trr.dump 2> traj.trr.dump.err
+
+    # Need to do this in order to avoid wrong output when NSTEPS is not divisible 
+    # by SIM_TIME
+    SIM_TIME_APROX=$(echo "$SIM_TIME - 0.000001" | bc)
+    out="$(echo -e "Kinetic\nPotential\n\n" | $GMX energy -f ener.edr -b $SIM_TIME_APROX 2>/dev/null)"
+    echo "$out" | grep -q "All statistics are over 1 points"
+    if [[ $? -ne 0 ]]; then
+        echo "Error in energy output"
+        exit 1
+    fi
+
+    echo "Kinetic (kJ/mol), Potential (kJ/mol)" > ener.csv
+    echo "$out" | grep "Kinetic En." | tr -s ' ' | cut -d ' ' -f 3 | tr -d '\n' >> ener.csv
+    echo -n "," >> ener.csv
+    echo "$out" | grep "Potential" | tr -s ' ' | cut -d ' ' -f 2 | tr -d '\n' >> ener.csv
 }
 
 # Generate mdp file based on an old mdp file and a string of parameters.
