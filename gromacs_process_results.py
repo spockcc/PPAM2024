@@ -183,8 +183,10 @@ def richardson_df(timess_coor):
     return df
 
 def energies_df(timess_energies):
+    timess_energies_sorted = dict(sorted(timess_energies.items(), reverse=True))
+
     df = pd.DataFrame(columns=['time-step', 'Kinetic En. (kJ/mol)', 'PE (kJ/mol)'])
-    for ts, energies in timess_energies.items():
+    for ts, energies in timess_energies_sorted.items():
         df.loc[len(df)] = [ts, energies[0], energies[1]]
 
     return df
