@@ -100,7 +100,7 @@ In the past, the authors have sought to accelerate the solution of nonlinear con
 We have now discovered that the output of GROMACS is not always amenable to Richardson's analysis.
 In this paper we derive and illustrate the use of Richardson's technique using a variety of numerical experiments.
 We identify two conditions that are not always satified by GROMACS and we demonstrate that each condition is necessary for the succesful application of Richardson's techniques.
-Our data and software is freely available from our GitHub along with every script needed to generate every number, table and figure from scratch.
+Our data and software is freely available from our GitHub along with every script needed to generate every number, table and figure from scratch. The names of MATLAB function shall be written using a typewriter font, ex. {\tt plot\_shells}. 
 
 
 \section{Theory}
@@ -113,7 +113,7 @@ such that the error $E_h = T - A_h$ satisfies
 \begin{equation} \label{equ:aex}
   E_h  = \alpha h^p + \beta h^q + O(h^r), \quad h \rightarrow 0_+
 \end{equation}
-We say that the error $E_h$ satisfies an asymptotic error expansion. Frequently, the exponents $(p,q,r)$ are all integers, but since we shall allow exponents that are not integers, we must insist that $h$ is strictly positive.
+We say that the error $E_h$ satisfies an asymptotic error expansion. Frequently, the exponents $(p,q,r)$ are all integers, but since we shall allow exponents that are not integers, we insist that $h$ is strictly positive.
 
 Our first task to estimate the error $E_h$ for a specific value of $h$. Richardson's error estimate $R_h$ is defined by the equation
 \begin{equation}
@@ -247,41 +247,7 @@ We observe that $k \rightarrow \log_2|\hat{F}_{h_k} - 4|$ is essentially a linea
 This is the so-called asymptotic range, where the computed value $\hat{A}_h$  behaves in a manner that is indistinguishable from the exact value $A_h$.
 We conclude that the experiments supports the existence of an asymptotic error expansion with $(p,q) = (2,4)$.
 Since the target value $T$ is known, we can treat Richardson's error estimate as an approximation of the error $T - \hat{A}_h$ and compute the corresponding relative error, see Figure \ref{fig:rint_mwe1b}.
-We observe that computed value of Richardson's error estimate is a good approxmation of the error $T - \hat{A}_h$.
-
-% tiny scriptsize footnotesize small normalsize large Large LARGE 
-
-% \begin{myverbbox}[\scriptsize]{\valpha}
-%  k |                A_h |         F_h |         R_h |         E_h | (E_h-R_h)/R_h
-%  0 | 1.859140914230e+00 |  0.00000000 |  0.0000e+00 | -1.4086e-01 |    1.0000e+00
-%  1 | 1.753931092465e+00 |  0.00000000 | -3.5070e-02 | -3.5649e-02 |    1.6251e-02
-%  2 | 1.727221904558e+00 |  3.93908726 | -8.9031e-03 | -8.9401e-03 |    4.1402e-03
-%  3 | 1.720518592164e+00 |  3.98447608 | -2.2344e-03 | -2.2368e-03 |    1.0400e-03
-%  4 | 1.718841128580e+00 |  3.99610010 | -5.5915e-04 | -5.5930e-04 |    2.6031e-04
-%  5 | 1.718421660316e+00 |  3.99902383 | -1.3982e-04 | -1.3983e-04 |    6.5098e-05
-%  6 | 1.718316786850e+00 |  3.99975588 | -3.4958e-05 | -3.4958e-05 |    1.6276e-05
-%  7 | 1.718290568083e+00 |  3.99993897 | -8.7396e-06 | -8.7396e-06 |    4.0690e-06
-%  8 | 1.718284013367e+00 |  3.99998474 | -2.1849e-06 | -2.1849e-06 |    1.0167e-06
-%  9 | 1.718282374686e+00 |  3.99999619 | -5.4623e-07 | -5.4623e-07 |    2.5759e-07
-% 10 | 1.718281965016e+00 |  3.99999904 | -1.3656e-07 | -1.3656e-07 |    6.5583e-08
-% 11 | 1.718281862598e+00 |  3.99999982 | -3.4139e-08 | -3.4139e-08 |    8.2385e-08
-% 12 | 1.718281836994e+00 |  3.99999982 | -8.5348e-09 | -8.5348e-09 |    1.4743e-07
-% 13 | 1.718281830593e+00 |  3.99999566 | -2.1337e-09 | -2.1337e-09 |   -3.7464e-06
-% 14 | 1.718281828992e+00 |  3.99999681 | -5.3343e-10 | -5.3342e-10 |   -1.8177e-05
-% 15 | 1.718281828592e+00 |  4.00004551 | -1.3335e-10 | -1.3335e-10 |   -2.7197e-05
-% 16 | 1.718281828492e+00 |  4.00022202 | -3.3337e-11 | -3.3341e-11 |    1.1322e-04
-% 17 | 1.718281828467e+00 |  4.00046186 | -8.3333e-12 | -8.3409e-12 |    9.1400e-04
-% 18 | 1.718281828461e+00 |  3.98094194 | -2.0933e-12 | -2.0610e-12 |   -1.5658e-02
-% 19 | 1.718281828460e+00 |  4.13782004 | -5.0589e-13 | -5.4334e-13 |    6.8928e-02
-% 20 | 1.718281828459e+00 |  3.95086705 | -1.2805e-13 | -1.5921e-13 |    1.9572e-01
-% \end{myverbbox}
-
-% \begin{figure}
-%   \centering
-%   \valpha
-%   \caption{Numerical integration of a function that is everywhere smooth.} \label{fig:rint_mwe1}
-% \end{figure}
-
+We observe that computed value of Richardson's error estimate is a good approxmation of the error $T - \hat{A}_{h_h}$. In fact, the corresponding relative error decreases when $k$ increases and we remain inside the asymptotic region.
 
 \begin{figure}[h]
 \begin{subfigure}[h]{0.49\linewidth}
@@ -360,13 +326,13 @@ In fact, the corresponding relative error decreases when $k$ increases and we re
 \caption{The evolution $F_h$ and the accuracy of $R_h$ for a method with $(p,q) = (\frac{3}{2},2)$.}
 \end{figure}
 
-We mention in passing that low order methods are more pratical than high order methods in the sense that low order methods tend to have asymptotic ranges that are larger than high order methods.
+We mention in passing that low order methods are more practical than high order methods in the sense that low order methods tend to have asymptotic ranges that are larger than high order methods.
 This is due to the fact the function $h \rightarrow F_h$ suffers from subtractive cancellation when $h$ is sufficiently small and this issue is more acute for high order methods than for low order methods.
 
 
 \section{Practical examples}
 
-In this section we present the results of more elaborate examples that highlight the practical limitations of Richardson's extrapolation as well as some limitations of contemporary software for doing molecular dynamics. Every function or script necessary to replicate the numbers needed to reproduce the figures is freely available from the authors GitHub.
+In this section we present the results of more elaborate examples that highlight the practical limitations of Richardson's extrapolation as well as some limitations of contemporary software for doing molecular dynamics.
 
 \subsection{A successful application of the theory}
 
@@ -376,14 +342,14 @@ In this section we shall demonstrate how the theory can be applied to analyze a 
 
 Consider the D-20 howitzer whose effective range is known to be about 17.4 km. We have access to tables that describe the drag coefficient of 6 different shell types. Given the mass, diameter and muzzle velocity of the shells, can we determine the best possible match with any degree of confidence?
 
-The script {\tt maxrange\_rk1} models a shells point particle moving in a plane subject to Earth's standard gravity and the international standard atmosperic model. Each trajectory is integrated using Euler's explicit method ({\tt 'rk1'}) and all but the final step has the same size $h$. The final step is adjusted to place the shell directly on the ground. While the relevant equation is linear and could be solved to machine precision, the bisection method is deliberately used to compute the final step with an error that is bounded by ${\tt tol} \cdot h$, where ${\tt tol}$ is set by the script. The drag function are interpolated from tables using cubic spline interpolation.
+The script {\tt maxrange\_rk1} models a shell as a point particle moving in a plane subject to Earth's standard gravity and the international standard atmosperic model. This is a crude model that is suitable only for short range artillery, because it does not account for the rotation of the Earth or the oriention and spin of the projectile. Each trajectory is integrated using Euler's explicit method ({\tt 'rk1'}) and all but the final step has the same size $h$. The final step is adjusted to place the shell directly on the ground. While the relevant equation is linear and could be solved to machine precision, the bisection method is deliberately used to compute the final step with an error that is bounded by ${\tt tol} \cdot h$, where ${\tt tol}$ is set by the script. The drag function are interpolated from tables using cubic spline interpolation. The function {\tt plot\_shells} will plot the drag coefficients for the different shells as a function of the Mach number.
 
 For each drag coefficient our target value $T$ is the maximum range of the shell as the elevation varies continuously from $0$ to $\frac{\pi}{2}$. For each drag coefficient, we compute $12$ different approximations $A_{h_k}$ of $T$ using the step size $h_k = 2^{3-k}$ seconds, where $k \in \{1,2,\dots,12\}$.
 For each drag coefficient and for each value of the time step $h$, a range function is defined which returns the range of the shell as a function of the howitzers elevation $\theta$.
-The range functions are unimodal and the maximum range is found using the golden section search algorithm.
-The initial search bracket is $[0,\pi/2$] and this bracket is systematically reduced in length until it is shorter than $\frac{pi}{2}u$.
+The range functions are unimodal and the maximum range is found using the golden section algorithm.
+The initial search bracket is $[0,\pi/2$] and this bracket is systematically reduced in length until it is shorter than $\frac{\pi}{2}u$.
 
-The script will either read the raw data from a file or generate it from scratch. In any case, the script produces several figures and tables including Figure \ref{fig:maxrange_rk1_table_tol53} and Figure \ref{fig:maxrange_rk1_fraction_tol53}. These figures represent calculations where the shell is placed on the ground with ``excessive'' accuracy in the sense that the final step is computed with an error that is bounded $u h_{k}$ where $u = 2^{-53}$ is the double precision unit roundoff. Figure \ref{fig:maxrange_rk1_table_tol53} list the maximum range and the corresponding error estimate for each of the shells know to us computed using a time step of $h = 2^{-9} s$. In each case the error estimate suggests that the computed range is exact to number of figures shown. In particular, we see while a G7 type shell achieves a maximum range of 17.4 km, all other shells have ranges that are less than 16.9 km. However, it is a fallacy to conclude anything on the basis of the computed ranges and the associated error estimates. We need to assert that we are inside the asymptotic range and that the error estimates are reliable. To this end, we examine the evolution of Richardson's fraction for the maximum range of each shell, see Figure \ref{fig:maxrange_rk1_fraction_tol53}. For each of the 6 different drag coefficients we find that evolution of Richardson's fraction supports an asymptotic error expansion with $(p,q) = (1,2)$. This result is entirely consistent with the use of Euler's explicit method. We observe that for each drag coefficient, $k=12$ is still inside the asymtotic range and we have no reason to doubt the quality of the error estimate. We conclude that the best shell model for the D-20 howitzer is the G7 shell.
+The script will either read the raw data from a file or generate it from scratch. In any case, the script produces several figures and tables including Figure \ref{fig:maxrange_rk1_table_tol53} and Figure \ref{fig:maxrange_rk1_fraction_tol53}. These figures represent calculations where the shell is placed on the ground with ``excessive'' accuracy in the sense that the final step is computed with an error that is bounded $u h_{k}$ where $u = 2^{-53}$ is the double precision unit roundoff. Figure \ref{fig:maxrange_rk1_table_tol53} list the maximum range and the corresponding error estimate for each of the shells know to us computed using a time step of $h = 2^{-9} s$. In each case the error estimate suggests that the computed range is exact to number of figures shown. In particular, we see that while a G7 type shell achieves a maximum range of 17.4 km, all other shells have ranges that are less than 16.9 km. However, it is a fallacy to conclude anything on the basis of the computed ranges and the associated error estimates. In each case, we need to assert that we are inside the asymptotic range and that the error estimates are reliable. To this end, we examine the evolution of Richardson's fraction for the maximum range of each shell, see Figure \ref{fig:maxrange_rk1_fraction_tol53}. For each of the 6 different drag coefficients we find that evolution of Richardson's fraction supports an asymptotic error expansion with $(p,q) = (1,2)$. This result is consistent with the use of Euler's explicit method which is 1st order accurate in the time step. We observe that for each drag coefficient, $k=12$ is still inside the asymtotic range and we have no reason to doubt the magnitude of the error estimate. We conclude that the best model for the D-20 howitzer is the G7 shell.
 
 \begin{myverbbox}[\normalsize]{\vgamma}
 Shell type  Maximum range (m) Error estimate (m)
@@ -408,35 +374,64 @@ Shell type  Maximum range (m) Error estimate (m)
   \caption{The evolution of Richardson's fraction corresponding to the maximum range of 6 different shells fired from the D-20 howitzer.} \label{fig:maxrange_rk1_fraction_tol53}
 \end{figure}
 
-
-
 \subsection{An unsuccesful application of the theory}
 
-In this section we present the experiment that triggered the production of the present paper. We attempted to apply Richardson's techniques in the context of molecular dynamics with constraints. It was a spectacular failure with no obvious pattern controlling the computed numbers. While we cannot claim to fully understand our failure, we have identified two key differences between the our two test cases and we have through a sequence of experiments verified that each difference is enough to destroy any hope of having an asymptotic error expansion.
+We utilized GROMACS v2021 to conduct experiments on the behavior of hen egg white lysozyme submerged in water within a cubic simulation box, following Justin Lemkul's Lysozyme in Water GROMACS Tutorial \cite{}. Several steps were taken to prepare the system for production simulation: first, ions were introduced to achieve electrical neutrality. Subsequently, energy minimization was performed using the steepest descent algorithm until the maximum force reached below 1000.0 kJ/(mol·nm). Following this, the system underwent 100 ps of equilibration in an NVT ensemble to stabilize temperature, followed by another 100 ps of equilibration in an NPT ensemble to stabilize pressure. The described process was replicated using two different force fields, OPLS-AA/L and CHARMM36. We conducted production simulations of 1 ps for both force fields, using $n$ steps to cover this interval where
+\begin{equation}
+  n \in \{250, 500, 1000, 1100:100:2000, 3000:1000:16000\}.
+\end{equation}
+Moreover, we used two different tolerances {\tt tol} for the SHAKE algorithm, namely
+\begin{equation}
+  \text{tol} \in \{10^{-4}, 10^{-12}\}.
+\end{equation}
+For each experiment, we computed the total kinetic and potential energy of the system at the end of the simulation.
+The function {\tt gromacs\_figures} will generate Figure~\ref{fig:oplsaaltol04} and Figure~\ref{fig:oplsaaltol12} for the OPLS-AA/L force-file and similar figures for CHARMM36. These figures display the mechanical energies of the molecule at the end of the simulation as a function of the total number $n$ of time steps used to cover the interval. The figures have several features of interest.
 
-We utilized GROMACS v2021 to conduct experiments on the behavior of hen egg white lysozyme submerged in water within a cubic simulation box, following Justin Lemkul's Lysozyme in Water GROMACS Tutorial. Several steps were taken to prepare the system for production simulation: first, ions were introduced to achieve electrical neutrality. Subsequently, energy minimization was performed using the steepest descent algorithm until the maximum force reached below 1000.0 kJ/(mol·nm). Following this, the system underwent 100 ps of equilibration in an NVT ensemble to stabilize temperature, followed by another 100 ps of equilibration in an NPT ensemble to stabilize pressure. The described process was replicated using two different force fields, OPLS-AA/L and CHARMM36. We conducted production simulations of 1 ps for both force fields, varying the number of executed steps from 250 to 16000 and employing two different tolerances for the SHAKE algorithm (1E-4 and 1E-12). For each experiment we computed the total kinetic and potential energy of the system at the end of the simulation.
+\begin{enumerate}
+\item The kinitic energy exhibits violent oscilations for ${\tt tol} = 10^{-4}$. Rapid oscillations are also shown by the potential energy, but they are less extreme. The applitude of all oscillations is significantly reduced when the constraint equations are solved accurately, i.e., ${\tt tol} = 10^{-12}$. This reduction is not unexpected.
+\item Apart from the oscillations, the total energy exhibits what appears to be linear growth with the number of time steps. This is not surprising as we expect the rounding error to grown with the number of operations. The function {\tt gromacs\_fit} does a linear least squares fit of the total energy {\tt etol} to two models $M_1$ and $M_2$ where model $M_p$ assumes that ${\tt etol} = T + C_1n + C_2/n^p$ for suitable constants $T, C_1, C_2$. Since the SHAKE algorithm is 2nd order accurate in the time step, one would expect model $M_2$ to provide the best fit, but for this data model $M_1$ is a marginally better. While mildly interesting, this issue is vastly less important than the final point.
+\item If the computed energies for ${\tt tol} = 10 ^{-12}$ follow an asymptotic error expansion, then the commonly used time step of $1$ fs ($n=1000$ in this case) is \emph{not} in the asymptotic range. Why is this? If we where in the asymptotic range, then the computed energies $A_h$ would follows follow a power law, i.e. $A_h \approx T - \alpha h^p$ would be a good approximation for some power $p>0$. In particular, the behaviour would be \emph{monotone} and the tiny oscillations that we have recorded would not be present.
+\end{enumerate}
+
+We are left to make the following conclusions:
+\begin{enumerate}
+  \item If we do not solve the constraint equations accurately, then we cannot expect the computed energies to change slowly with the number of time steps.
+  \item If we solve the constraint equations accurately, then there is no reason to believe that we have an asymptotic error expansion or that our time is in the asymptotic range.
+  \end{enumerate}
+  This is more serious than one might think. It is easy to verify that changing the force-field changes the final result, but how much this change is due to computational errors? If we cannot detect, when the computational error is irrelevant and estimate the discretization error, then we cannot compute the modelling error.
+
+
+% \begin{figure}
+%   \centering
+%   \includegraphics[width=12cm]{charmm36tol04.pdf}
+%   \caption{The evolution of the mechanical energy of a molecule as a function of the number of time-steps used to cover $1$ps of real time. The force-field is CHARMM36 and the constraint equations are not solved with great accuracy, i.e. ${\tt tol} = 10^{-4}$. } \label{fig:charmm36tol04}
+% \end{figure}
+
+% \begin{figure}
+%   \centering
+%   \includegraphics[width=12cm]{charmm36tol12.pdf}
+%    \caption{The evolution of the mechanical energy of a molecule as a function of the number of time-steps used to cover $1$ps of real time. The force-field is CHARMM36 and the constraint equations are solved with great accuracy, i.e. ${\tt tol} = 10^{-12}$.} \label{fig:charmm36tol12}
+% \end{figure}
 
 \begin{figure}
   \centering
-  \includegraphics[width=12cm]{charmm36tol04.pdf}
+  \includegraphics[width=12cm]{oplsaaltol04.pdf}
+  \caption{The evolution of the mechanical energy of a molecule as a function of the number of time-steps used to cover $1$ps of real time. The force-field is OPLSAAL and the constraint equations are not solved with great accuracy, i.e. ${\tt tol} = 10^{-4}$. } \label{fig:oplsaaltol04}
 \end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=12cm]{oplsaaltol12.pdf}
+   \caption{The evolution of the mechanical energy of a molecule as a function of the number of time-steps used to cover $1$ps of real time. The force-field is OPLSAAL and the constraint equations are solved with great accuracy, i.e. ${\tt tol} = 10^{-12}$.} \label{fig:oplsaaltol12}
+\end{figure}
+
+\section{The difference between succes and failure}
+
+In this section we contemplate the difference between the succesful and unsuccesful application of the theory. We identify two key conditions that are not always satisfied by the GROMACS library and we demonstrate that they are necessary for the succesful application of Richardson's techniques.
 
 \section{The need for sufficient accuracy}
 
-
-
-
-
-
-There are reasons beyond error estimation for solving the constraint equations accurately. The chemistry literature contains several papers that bemoan the fact that the energy drift is unacceptably large unless the constraint equations are solved with sufficient accuracy. However, what is perhaps less well known is \emph{direction} of the energy drift can depend on the choice of algorithm used to solve the constraint equations! We shall now present two examples that illustrate this point. We shall simulate the motion of a simple pendulum over a large number of periods. The only difference between the two simulation shall be the choice of algorithm used solve the scalar constraint equation.
-
-\paragraph{Example: A pendulum that gains energy through numerical error}
-
-\paragraph{Example: A pendulum that loses energy through numerical error} 
-
-\section{The need for sufficient smoothness}
-
-
+When 
 
 
 \section{Conclusion}
