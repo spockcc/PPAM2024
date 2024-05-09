@@ -370,7 +370,7 @@ Shell type  Maximum range (m) Error estimate (m)
   \label{fig:maxrange_rk1_table_tol53} 
 \end{figure}
 
-\begin{figure}
+\begin{figure}[t!]
   \centering
   \includegraphics[width=12cm]{maxrange_rk1_tol53.png}
   \caption{The evolution of Richardson's fraction corresponding to the maximum range of 6 different shells fired from the D-20 howitzer.} \label{fig:maxrange_rk1_fraction_tol53}
@@ -389,8 +389,25 @@ Moreover, we used two different tolerances {\tt tol} for the SHAKE algorithm, na
 For each experiment, we computed the total kinetic and potential energy of the system at the end of the simulation.
 The function {\tt gromacs\_figures} will generate Figure~\ref{fig:oplsaaltol04} and Figure~\ref{fig:oplsaaltol12} for the OPLS-AA/L force-file and similar figures for CHARMM36. These figures display the mechanical energies of the molecule at the end of the simulation as a function of the total number $n$ of time steps used to cover the interval. The figures have several features of interest.
 
+\begin{figure}
+  \centering
+  \includegraphics[width=12cm]{oplsaaltol04.pdf}
+  \caption{The evolution of the mechanical energy of a molecule as a function of the number of time-steps used to cover $1$ps of real time. The force-field is OPLSAAL and the constraint equations are not solved with great accuracy, i.e. ${\tt tol} = 10^{-4}$. } \label{fig:oplsaaltol04}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=12cm]{oplsaaltol12.pdf}
+   \caption{The evolution of the mechanical energy of a molecule as a function of the number of time-steps used to cover $1$ps of real time. The force-field is OPLSAAL and the constraint equations are solved with great accuracy, i.e. ${\tt tol} = 10^{-12}$.} \label{fig:oplsaaltol12}
+\end{figure}
+
+
+
+
+
+
 \begin{enumerate}
-\item The kinitic energy exhibits violent oscilations for ${\tt tol} = 10^{-4}$. Rapid oscillations are also shown by the potential energy, but they are less extreme. The applitude of all oscillations is significantly reduced when the constraint equations are solved accurately, i.e., ${\tt tol} = 10^{-12}$. This reduction is not unexpected.
+\item The kinetic energy exhibits violent oscilations for ${\tt tol} = 10^{-4}$. Rapid oscillations are also shown by the potential energy, but they are less extreme. The applitude of all oscillations is significantly reduced when the constraint equations are solved accurately, i.e., ${\tt tol} = 10^{-12}$. This reduction is not unexpected.
 \item Apart from the oscillations, the total energy exhibits what appears to be linear growth with the number of time steps. This is not surprising as we expect the rounding error to grown with the number of operations. The function {\tt gromacs\_fit} does a linear least squares fit of the total energy {\tt etol} to two models $M_1$ and $M_2$ where model $M_p$ assumes that ${\tt etol} = T + C_1n + C_2/n^p$ for suitable constants $T, C_1, C_2$. Since the SHAKE algorithm is 2nd order accurate in the time step, one would expect model $M_2$ to provide the best fit, but for this data model $M_1$ is a marginally better. While mildly interesting, this issue is vastly less important than the final point.
 \item If the computed energies for ${\tt tol} = 10 ^{-12}$ follow an asymptotic error expansion, then the commonly used time step of $1$ fs ($n=1000$ in this case) is \emph{not} in the asymptotic range. Why is this? If we where in the asymptotic range, then the computed energies $A_h$ would follows follow a power law, i.e. $A_h \approx T - \alpha h^p$ would be a good approximation for some power $p>0$. In particular, the behaviour would be \emph{monotone} and the tiny oscillations that we have recorded would not be present.
 \end{enumerate}
@@ -415,17 +432,7 @@ We are left to make the following conclusions:
 %    \caption{The evolution of the mechanical energy of a molecule as a function of the number of time-steps used to cover $1$ps of real time. The force-field is CHARMM36 and the constraint equations are solved with great accuracy, i.e. ${\tt tol} = 10^{-12}$.} \label{fig:charmm36tol12}
 % \end{figure}
 
-\begin{figure}
-  \centering
-  \includegraphics[width=12cm]{oplsaaltol04.pdf}
-  \caption{The evolution of the mechanical energy of a molecule as a function of the number of time-steps used to cover $1$ps of real time. The force-field is OPLSAAL and the constraint equations are not solved with great accuracy, i.e. ${\tt tol} = 10^{-4}$. } \label{fig:oplsaaltol04}
-\end{figure}
 
-\begin{figure}
-  \centering
-  \includegraphics[width=12cm]{oplsaaltol12.pdf}
-   \caption{The evolution of the mechanical energy of a molecule as a function of the number of time-steps used to cover $1$ps of real time. The force-field is OPLSAAL and the constraint equations are solved with great accuracy, i.e. ${\tt tol} = 10^{-12}$.} \label{fig:oplsaaltol12}
-\end{figure}
 
 \section{The difference between succes and failure}
 
@@ -437,7 +444,43 @@ The output of GROMACS is clearly dependent how accurate we solve the constraint 
 
 \section{The need for sufficient smoothness}
 
-The GROMACS library is highly optimized in order to reduced the time-to-solution. In the case of the force-field calculation it is common to ignore the interaction between particles that are judged to be sufficiently far away. In practice, this is done by setting individual force-fields to zero outside of a sufficiently large ball. There is more than way to achieve this goal and the online documentation suggest that GROMACS operates with force-fields that are of class $C^1$. Why is this a concern in the context of practical error estimation? Proving that an asymptotic error expansion exist is often an exercise in manipulating Taylor expansions and this is only possible when the functions are sufficiently differentiable. We have designed a sequence of numerical experiment that illustrate this exact point. We consider a system of $m$ identical ions moving in a liquid. They repel each other according to Coulumb's law and they are pulled towards the origo according to Hooke's law. The friction between each ion and the fluid is proportional to its current velocity. This is a simple setup that ensure that particles will ultimate come to rest in a position where all forces balances each other. Can we estimate the value of the electrostatic energy at at specific time $T$? This is the question that we explore in a sequence of 4 scripts. In {\tt iontrap\_mwe1} we do not modify the electrostatic force-fields and the $m=4$ ions ultimately form a regular tetrahedron with edge length $\rho$. In {\tt ointrap\_mwe2} we modify the force-field $f = f(r)$ generated by an ion, by retain the exact value of the force-field inside a ball centered on the ion with radius $\rho/2$ and settting it to zero outside the ball. This ensures introduces jump-discontinuites into the simulation. In {\tt iontrap\_mwe4} the transition to zero is done smoothly in the region from $0.5 \rho < r < 0.95 r$. It is clear that changing the force-fields is equivalent to physical changes, but can we estimate the discretization error? Figure \ref{}, \ref{}, \ref{} show the evolution of Richardson's fraction for the total kinetic energy at the end of 
+The GROMACS library is highly optimized in order to reduced the time-to-solution. In the case of the force-field calculation it is common to ignore the interaction between particles that are judged to be sufficiently far away. In practice, this is done by setting individual force-fields to zero outside of a sufficiently large ball. There is more than way to achieve this goal and the online documentation suggest that GROMACS operates with force-fields that are of class $C^1$. Why is this a concern in the context of practical error estimation? Proving that an asymptotic error expansion exist is often an exercise in manipulating Taylor expansions and this is only possible when the functions are sufficiently differentiable. We have designed a sequence of numerical experiment that illustrate this exact point. We consider a system of $m$ identical ions moving in a liquid. They repel each other according to Coulumb's law and they are pulled towards the origo according to Hooke's law. The friction between each ion and the fluid is proportional to its current velocity. This is a simple setup that ensure that particles will ultimate come to rest in a position where all forces balances each other. Can we estimate the value of the kinetic energy at at specific time $T$? This is the question that we explore in a sequence of scripts. Let $f$ denote the force-field emenating from an particle with charge $q$, i.e
+\begin{equation}
+  f(\bm{r}) = - c \frac{q}{\|\bm{r}\|^2} \frac{\bm{r}}{\|\bm{r}\|}
+\end{equation}
+In {\tt iontrap\_mwe1} we do not modify the electrostatic force-fields and the $m=4$ ions ultimately form a regular tetrahedron with edge length $\rho$. In {\tt iontrap\_mwe2} we replace $f$ with
+\begin{equation}
+  f_1(\bm{r}) = f(\bm{r}) g_1(r), \quad g_1(r) = \begin{cases} 1  & 0 \leq r < \rho \\ 0 & \rho \leq r \end{cases}
+\end{equation}
+This introduces jump discontinuites into the simulation. In {\tt iontrap\_mwe4} the transition to zero is done smoothly in the region from $0.5 \rho < r < 0.95 r$. It is clear that changing the force-fields is equivalent to physical changes, but can we estimate the discretization error? Figure \ref{fig:iontrap_mwe1}, \ref{fig:iontrap_mwe2}, \ref{fig:iontrap_mwe4} show the evolution of Richardson's fraction for the total kinetic energy at the end of each simulation.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=10cm]{iontrap_mwe1.pdf}
+  \caption{The evolution of Richardson's fraction for the total kinetic energy of a system of $m=4$ ions using Runge-Kutta methods of order $p \in \{1,2,3,4\}$}
+  \label{fig:iontrap_mwe1}
+\end{figure}
+
+When the force-fields are not perturbed, Figure~\ref{fig:iontrap_mwe1}, there experiments supports the conjecture that the exists an asymptotic error expansion and we can clearly identify an asymptotic range for each of the 4 Runge-Kutta methods used to integrate the dynamical system. 
+
+\begin{figure}
+  \centering
+  \includegraphics[width=10cm]{iontrap_mwe2.pdf}
+  \caption{The evolution of Richardson's fraction for the total kinetic energy of a system of $m=4$ ions using Runge-Kutta methods of order $p \in \{1,2,3,4\}$. The electrostatic force-fields are zero outside a small sphere and exhibit jump discontinuities.}
+  \label{fig:iontrap_mwe2}
+\end{figure}
+
+When the force-fields are truncated and jump-discontinuities are introduced, Figure~\ref{fig:iontrap_mwe2}, there is no evidence to suggest that there exists an asymptotic error expansion and there is no reason to suspect that Richardson's error estimate is accurate.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=10cm]{iontrap_mwe4.pdf}
+  \caption{The evolution of Richardson's fraction for the total kinetic energy of a system of $m=4$ ions using Runge-Kutta methods of order $p \in \{1,2,3,4\}$. The electrostatic force-fields are zero outside a small sphere, but the transition to zero is done smoothly.}
+  \label{fig:iontrap_mwe4}
+\end{figure}
+
+When the force-field vanish outside a small ball, but retain their smoothness, Figure~\ref{fig:iontrap_mwe4}, we retain the ability to judge when Richardson's error estimates are reliable.
+
 
 \section{Conclusion}
 

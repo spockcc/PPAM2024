@@ -1,15 +1,26 @@
 % Ion trap with dampning
 % Runge-Kutta methods
 % The forcefield transitions smoothly to zero 
+% 
 
-% Set the central file name
-datpath='../experiments/iontrap/dat/';
-fname=strcat(datpath,"iontrap_mwe4.mat");
+% Clear the work space
+clear;
+
+% Set the main path
+mpath='../experiments/iontrap/';
+
+% Set the data path
+dpath=strcat(mpath,'dat/');
+dname=strcat(dpath,'iontrap_mwe4.mat');
+
+% Set the figure path
+fpath=strcat(mpath,'fig/');
+fname=strcat(fpath,'iontrap_mwe4.eps');
 
 % Check if raw data exists
-if ~isfile(fname)
+if ~isfile(dname)
 
-    % Run experiment from scracth
+    % Run experiment from scratch
     fprintf("Generating raw data\n");
 
     % Seed the generator
@@ -24,12 +35,15 @@ if ~isfile(fname)
     % Set the leading dimension of the arrays
     ld=n*dim;
 
-    % Generate position and momenta
+    % Generate position and velocities
     q0=rand(ld,1)-rand(ld,1); p0=zeros(ld,1);
 
     % Set the charges
     charge=ones(n,1)/16;
 
+    % Set the mass of the particles
+    mass=ones(n,1);
+    
     % Generate initial state
     x0=[q0; p0];
 
@@ -55,7 +69,7 @@ if ~isfile(fname)
     g=@(t,x)[x(ld+1:2*ld,1); f(x(1:ld,1),x(ld+1:2*ld,1))];
 
     % The length of the simulation
-    T=10;
+    T=5;
 
     % Number of methods
     nm=4;
@@ -73,7 +87,7 @@ if ~isfile(fname)
     % Number of samples
     N1=512;
 
-    % Number of simulations/approximations
+    % Number of approximations A_h
     kmax=12;
 
     % Allocate space for the raw data
@@ -82,6 +96,9 @@ if ~isfile(fname)
     % Allocate space for the processed data
     table=zeros(kmax,4,nm);
 
+    % Compute the number of experiments
+    nexp=nm*kmax;
+    
     % Loop over the different methods
     for j=1:nm
         % Select the method
@@ -91,8 +108,9 @@ if ~isfile(fname)
         % Loop over the different timestep sizes
         for k=1:kmax
             % Progress
-            cnt=k+(j-1)*kmax; disp([cnt nm*kmax]);
-            
+            cnt=k+(j-1)*kmax; 
+            % Display progress indicator
+            fprintf('Experiment %2d of %2d\n',cnt,nexp);            
             % Run the simulation
             [t, y]=rk(g,0,T,x0,N1,N2,method);
             % Save the state vectors
@@ -102,21 +120,26 @@ if ~isfile(fname)
         end
     end
     % Save all data
-    save(fname);
+    save(dname);
+    % Skip a line
+    fprintf('\n');
+else
+    fprintf("Loading raw data\n");
+    % Load data
+    load(dname);
 end
 
-fprintf("Loading raw data\n");
-% Load data
-load(fname);
-
-% Allocate space for potential energy
-pot=zeros(kmax,nm);
+% Allocate space for the kinetic energy
+kin=zeros(kmax,nm);
 
 % Allocate space for Richardson's tables
 table=zeros(kmax,4,nm);
 
 % Parameters for printing
 tp=table_param('rdif',table(:,:,1));
+
+% Get a new figure
+fig=figure();
 
 % Loop over the methods
 for j=1:nm
@@ -127,23 +150,33 @@ for j=1:nm
         y=raw(:,:,k,j);
         % Exact state vector at the end of the sim
         aux=y(:,end);
-        % Extract positions and momenta
-        q=aux(1:ld); p=aux(ld+1:end);
-        % Compute potential energy
-        pot(k,j)=U(q);
-
+        % Extract positions and velocities
+        q=aux(1:ld); v=aux(ld+1:end);
+        % Compute kinetic energy
+        kin(k,j)=kinetic_energy(dim,n,mass,v);
     end
 
     % Apply Richardson extrapolation
-    table(:,:,j)=richardson(pot(:,j),order(j));
+    table(:,:,j)=richardson(kin(:,j),order(j));
 
     % Compute force at the end of last simulation
-    val=norm(f(q,p));
+    val=norm(f(q,v));
 
     % Display information
     fprintf('Norm of force    = %e\n',val);
-    fprintf('Potential energy = %e\n',pot(kmax,j));
-    fprintf('Richardson extrapolation of the potential energy\n');
+    fprintf('Kinetic energy   = %e\n',kin(kmax,j));
+    fprintf('Richardson extrapolation of the kinetic energy\n');
     print_table(table(:,:,j),tp);
-    subplot(1,nm,j); plot_fraction(table(:,:,j),order(j));
+    subplot(1,nm,j);
+    plt=plot_fraction(table(:,:,j),order(j));
+    plt.LineWidth=2;
+    tit=['p = ' num2str(order(j),'%2d')]; title(tit);
+    ax=fig.CurrentAxes; ax.FontSize=15;
+    fprintf('\n');    
 end
+
+% Adjust graphics
+fig.Position=[300 800 1200 400];
+
+% Save the graphics
+saveas(fig,fname);
