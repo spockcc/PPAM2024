@@ -102,37 +102,81 @@ end
 % Allocate space for the data
 data=zeros(kmax,4,numshell,numtol);
 
-% Process the data and generate the plots
-for t=1:numtol
-    % Get a handle to a new figure
-    fig=figure();
-    % Plan where to put the figure
-    q=floor((t-1)/4); r=(t-1)-4*q;
-    % Position on screen
-    fig.Position=[10+r*300 650-q*600 840 630];
-    % Loop over the shell types
-    for j=1:numshell
-        % Apply Richardson extrapolation
-        data(:,:,j,t)=richardson(raw_range(:,j,t),p);
-        % Plot the fraction
-        sf=subplot(2,3,j); plt=plot_fraction(data(:,:,j,t),p);
+
+if (0==1)
+    
+    % Process all data and generate the plots
+    for t=1:numtol
+        % Get a handle to a new figure
+        fig=figure();
+        % Plan where to put the figure
+        q=floor((t-1)/4); r=(t-1)-4*q;
+        % Position on screen
+        fig.Position=[10+r*300 650-q*600 840 640];
+        % Loop over the shell types
+        for j=1:numshell
+            % Apply Richardson extrapolation
+            data(:,:,j,t)=richardson(raw_range(:,j,t),p);
+            % Plot the fraction
+            sf=subplot(2,3,j); plt=plot_fraction(data(:,:,j,t),p);
+            % Set the title
+            sf.Title=title(tit{j});
+            
+            % Set the fontsize for the axes
+            ax=fig.CurrentAxes; ax.FontSize=10; % ax.GridLineWidth=2;
+            
+            % Set the linewidth for the plot
+            plt.LineWidth=2;
+        end
         % Set the title
-        sf.Title=title(tit{j});
-
-        % Set the fontsize for the axes
-        ax=fig.CurrentAxes; ax.FontSize=20; % ax.GridLineWidth=2;
-
-        % Set the linewidth for the plot
-        plt.LineWidth=2;
+        sgtitle(['log2(tol) =' num2str(log2(tol(t)),'%d')]);
+        
+        % Save the figures
+        fname=strcat(figpath,'maxrange_rk2_tol',...
+            num2str(-log2(tol(t)),'%02d'),'.eps');
+        saveas(fig,fname);
     end
-    % Set the title
-    sgtitle(['log2(tol) =' num2str(log2(tol(t)),'%d')]);
-
-    % Save the figures 
-    fname=strcat(figpath,'maxrange_rk2_tol',...
-        num2str(-log2(tol(t)),'%02d'),'.png');
-    saveas(fig,fname);
+    
+else
+    
+    % Process all data, but only generate plots for G5, G6, G7
+    for t=1:numtol
+        % Get a handle to a new figure
+        fig=figure();
+        % Plan where to put the figure
+        q=floor((t-1)/4); r=(t-1)-4*q;
+        % Position on screen
+        fig.Position=[10+r*300 650-q*600 840 320];
+        % Loop over G5, G6 and G7
+        for j=1:6
+            % Apply Richardson extrapolation
+            data(:,:,j,t)=richardson(raw_range(:,j,t),p);
+            if (3<=j && j<=5)
+                % Plot the fraction
+                sf=subplot(1,3,j-2); plt=plot_fraction(data(:,:,j,t),p);
+                % Set the title
+                sf.Title=title(tit{j});
+                
+                % Set the fontsize for the axes
+                ax=fig.CurrentAxes; ax.FontSize=10; % ax.GridLineWidth=2;
+                
+                % Set the linewidth for the plot
+                plt.LineWidth=2;
+            end
+        end
+        % Set the title
+        sgtitle(['log2(tol) =' num2str(log2(tol(t)),'%d')]);
+        
+        % Save the figures
+        fname=strcat(figpath,'maxrange_rk2_tol',...
+            num2str(-log2(tol(t)),'%02d'),'.eps');
+        saveas(fig,fname);
+    end
+    
 end
+
+
+
 
 % Obtain table parameters
 tp=table_param('rdif',data(:,:,1,numtol));

@@ -249,12 +249,12 @@ We observe that computed value of Richardson's error estimate is a good approxim
 
 \begin{figure}[h]
 \begin{subfigure}[h]{0.49\linewidth}
-\includegraphics[width=\linewidth]{rint_mwe1a.png}
+\includegraphics[width=\linewidth]{rint_mwe1a.pdf}
 \caption{The evolution of $F_h$} \label{fig:rint_mwe1a}
 \end{subfigure}
 \hfill
 \begin{subfigure}[h]{0.49\linewidth}
-\includegraphics[width=\linewidth]{rint_mwe1b.png}
+\includegraphics[width=\linewidth]{rint_mwe1b.pdf}
 \caption{The size of $E_h$ and the accuracy of $R_h$} \label{fig:rint_mwe1b}
 \end{subfigure}%
 \caption{The behavior of $F_h$, $E_h$ and $R_h$ for a method with $(p,q) = (2,4)$.}
@@ -316,12 +316,12 @@ In fact, the corresponding relative error decreases when $k$ increases and we re
 
 \begin{figure}
 \begin{subfigure}[h]{0.49\linewidth}
-\includegraphics[width=\linewidth]{rint_mwe2a.png}
+\includegraphics[width=\linewidth]{rint_mwe2a.pdf}
 \caption{The evolution of $F_h$} \label{fig:rint_mwe2a}
 \end{subfigure}
 \hfill
 \begin{subfigure}[h]{0.49\linewidth}
-\includegraphics[width=\linewidth]{rint_mwe2b.png}
+\includegraphics[width=\linewidth]{rint_mwe2b.pdf}
 \caption{The size of $E_h$ and the accuracy of $R_h$.} \label{fig:rint_mwe2b}
 \end{subfigure}%
 \caption{The evolution $F_h$ and the accuracy of $R_h$ for a method with $(p,q) = (\frac{3}{2},2)$.}
@@ -369,7 +369,7 @@ The script will either read the raw data from a file or generate it from scratch
 
 \begin{figure}[t!]
   \centering
-  \includegraphics[width=\linewidth]{maxrange_rk1_tol53.png}
+  \includegraphics[width=\linewidth]{maxrange_rk1_tol53.pdf}
   \caption{The evolution of Richardson's fraction corresponding to the maximum range of 6 different shells fired from the D-20 howitzer.} \label{fig:maxrange_rk1_fraction_tol53}
 \end{figure}
 
@@ -407,19 +407,23 @@ In this section we identify two conditions that are not always satisfied by the 
 
 \section{The need for sufficient accuracy}
 
-The output of GROMACS is clearly dependent how accurate we solve the constraint equations. When computing the range of a howitzer it necessary to adjust the final time-step to place the shell directly on the ground. In the case of Euler's explicit method, the relevant equation is linear, but in general this is nonlinear equation. The function {\tt maxrange\_rk1\_mwe1} and it is companion {\tt maxrange\_rk2\_mwe2} both use the bisection method to compute the final time step with an error that is bounded by $h\cdot\text{tol}$ using a wide range of tolerance {\tt tol}. It is instructive to observe the consequences of solving this equation inaccurately. Figures \ref{fig:maxrange_rk2_tol11} ($\text{tol} = 2^{-11}$) and Figures \ref{fig:maxrange_rk2_tol25} ($\text{tol} = 2^{-25}$) show the evolution of Richardson's fraction for two different values of the tolerance {\tt tol}.
+The output of GROMACS is clearly dependent how accurate we solve the constraint equations. When computing the range of a howitzer it necessary to adjust the final time-step to place the shell directly on the ground. In the case of Euler's explicit method, the relevant equation is linear, but in general this is nonlinear equation. The function {\tt maxrange\_rk1\_mwe1} and it is companion {\tt maxrange\_rk2\_mwe2} both use the bisection method to compute the final time step with an error that is bounded by $h\cdot\text{tol}$ using a wide range of tolerance {\tt tol}.
+
 
 \begin{figure}
   \includegraphics[width=\linewidth]{maxrange_rk2_tol11.png} \caption{The evolution of $F_h$ for the maximum range of 6 different shells using using Heyn's method (\text{'rk2'}) and $\text{tol} = 2^{-11}$.}
   \label{fig:maxrange_rk2_tol11}
 \end{figure}
 
+It is instructive to observe the consequences of solving this equation inaccurately. Figures \ref{fig:maxrange_rk2_tol11} ($\text{tol} = 2^{-11}$) and Figures \ref{fig:maxrange_rk2_tol25} ($\text{tol} = 2^{-25}$) show the evolution of Richardson's fraction for two different values of the tolerance {\tt tol}.
+
+
 \begin{figure}
   \includegraphics[width=\linewidth]{maxrange_rk2_tol25.png} \caption{The evolution of $F_h$ for the maximum range of 6 different shells computed using Heyn's method (\text{'rk2'}) and $\text{tol} = 2^{-25}$.}
   \label{fig:maxrange_rk2_tol25}
 \end{figure}
 
-When the tolerance is large (Figure~\ref{maxrange_rk2_tol11.png}) there is no evidence that an asymptotic error expansion exists and is no reason to trust Richardson's error estimate. When the tolerance is small (Figure~\ref{maxrange_rk2_tol25.png}), there is evidence to suggest that asymptotic error expansion exists and an asymptotic range can easily be identified for shells of type G1, G5 and G8. If we do not know which tolerance is sufficient and if an error estimate is required, then our safest course of action is solve all central equations as accurately as the hardware will allow.
+When the tolerance is large (Figure~\ref{fig:maxrange_rk2_tol11}) there is no evidence that an asymptotic error expansion exists and is no reason to trust Richardson's error estimate. When the tolerance is small (Figure~\ref{fig:maxrange_rk2_tol25}), there is evidence to suggest that asymptotic error expansion exists and an asymptotic range can easily be identified for shells of type G1, G5 and G8. If we do not know which tolerance is sufficient and if an error estimate is required, then our safest course of action is solve all central equations as accurately as the hardware will allow.
 
 \section{The need for sufficient smoothness}
 
@@ -428,11 +432,11 @@ It is common to ignore the interaction between atoms that are far away. This can
 In order to explore the importance of smoothness we have conducted a sequence of simple experiments. We simulated the motion of a small set of identical ions moving in a liquid. The ions repell each other electrostatically, but they are pulled towards the origo by independent and identical springs that obey Hooke's law. The friction between each ion and the liquid is proportional to its velocity. This ensures the ions ultimately come to rest in a stable configuration. 
 Let $f$ denote the forcefield generated by an ion located at $0$ with charge $q$. Then
 \begin{equation}
-  f(\br{r}) = c \frac{q}{\|\bm{r}\|^2} \frac{\bm{r}}{\|\bm{r}\|}
+  f(\bm{r}) = c \frac{q}{\|\bm{r}\|^2} \frac{\bm{r}}{\|\bm{r}\|}
 \end{equation}
 where $c > 0$ is a suitable constant. The script {\tt iontrap\_mwe1} does not modify the electrostatic force-fields and the $m=4$ ions ultimately form a regular tetrahedoron with edge length $\rho > 0$.
 In {\tt iontrap\_mwe1} we do not modify the electrostatic force-fields and the $m=4$ ions ultimately form a regular tetrahedron with edge length $\rho$.
-In {\tt iontrap\_mwe2} and {\tt iontrap\mwe4} we replace $f$ with
+In {\tt iontrap\_mwe2} and {\tt iontrap\_mwe4} we replace $f$ with
 \begin{equation}
   f_k(\bm{r}) = f(\bm{r}) g_k(r)
 \end{equation}
