@@ -18,10 +18,10 @@ for i=1:4
     aux=c{i}.data; field=c{i}.field; tol=c{i}.tol;
 
     % Rename the columns to reduce the chance of misprints
-    ekin=aux(:,3); epot=aux(:,4); etol=ekin+epot;
+    ekin=aux(:,3); epot=aux(:,4); % etol=ekin+epot;
 
     % Call specialized plotting routine
-    [fig, ax]=gromacs_plot(field, tol, n, ekin, epot, etol);
+    [fig, ax]=gromacs_plot(field, tol, n, ekin, epot);
 
     fname=strcat(field,'tol',num2str(round(-log10(tol)),'%02d'),'.eps');
     saveas(fig,strcat(figpath,fname));

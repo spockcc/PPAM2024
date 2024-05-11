@@ -57,14 +57,14 @@
 %
 \maketitle % typeset the header of the contribution
 %
-\begin{abstract} We consider the problem of estimating the error when solving a system of differential algebraic equations. Richardson extrapolation is a standard technique that can be used to judge when rounding errors are irrelevant and estimate the discretization error. We have simulated molecular dynamics with constraints using the GROMACS library and found that the output is not always ameable to Richardson's analysis. We derive and illustrate Richardson's technique using a variety of numerical experiments. We identify two necessary conditions that are not always satisfied by the GROMACS library.
+\begin{abstract} We consider the problem of estimating the error when solving a system of differential algebraic equations. Richardson extrapolation is a classical technique that can be used to judge when rounding errors are irrelevant and estimate the discretization error. We have simulated molecular dynamics with constraints using the GROMACS library and found that the output is not always ameable to Richardson's method. We derive and illustrate Richardson's method using a variety of numerical experiments. We identify two necessary conditions that are not always satisfied by the GROMACS library.
 \keywords{}
 \end{abstract}
 %
 %
 %
 
-\section{Motivation} Consider the problem resolving the motion of a system of atoms moving in a force-field $f$ subject to a set of constraints $g$. In this case, Newton's 2nd law takes the form the following system of differential algebraic equations
+\section{Motivation} Consider the problem resolving the motion of a system of atoms moving in a force-field $\bm{f}$ subject to a set of constraints $g$. In this case, Newton's 2nd law takes the form the following system of differential algebraic equations
 \begin{align}
   \bm{q}'(t) &= \bm{v}(t) \\
   \bm{M}\bm{v}'(t) &= \bm{f}(\bm{q}(t)) - \bm{G}(\bm{q}(t))^T\bm{\lambda}(t) \\
@@ -73,7 +73,7 @@
 The vector $\bm{q}$ represents the position of the atoms.
 The vector $\bm{v}$ represents the velocities of the atoms. The function $\bm{f}$ represents the force-field acting on the atoms.
 The nonsingular diagonal matrix $\bm{M}$ lists the masses of the atoms.
-The function $\bm{G}$ is the Jacobian of the constraint function $\bm{g}$.
+The function $\bm{G}$ is the Jacobian of the constraint function $\bm{g}$ and $\bm{\lambda}$ is a vector of Lagrange multipliers.
 In the field of molecular dynamics, the standard algorithm for this problem is the SHAKE algorithm.
 It uses a pair of staggered grids with uniform step size $h$ and takes the form
 \begin{align}
@@ -90,11 +90,11 @@ with respect to $\bm{f}$. The fundamental problem is that we cannot compute the 
 \begin{equation}
   |T_0 - T(\bm{f}) | \leq  |T_0 - A_h(\bm{f},\tau,u)| + |A_h(\bm{f}) - A_h(\bm{f},\tau,u)| + |T(\bm{f}) - A_h(\bm{f})|.
 \end{equation}
-We conclude that $T_0 - T(f)$ is small, if the computational error $A_h(\bm{f}) - A_h(\bm{f}, \tau, u)$ and the discretization error $T(\bm{f}) - A_h(\bm{f})$ are both small. If we cannot assert control over these errors, then we cannot say with certainty that our model is a good approximation of the physical reality.
+We conclude that $T_0 - T(\bm{f})$ is small, if the computational error $A_h(\bm{f}) - A_h(\bm{f}, \tau, u)$ and the discretization error $T(\bm{f}) - A_h(\bm{f})$ are both small. If we cannot assert control over these errors, then we cannot say with certainty that our model delivers a good approximation of the physical reality.
 
 As we shall demonstrate, Richardson extrapolation \cite{richardson1927} can often be used to determine when computational errors are insignificant and estimate the discretization error.
 In the past, we have sought to improve the solution of nonlinear constraint equations in the context of molecular dynamics by integrating Newton's method into the GROMACS library \cite{villelas2023accurate}
-Our goal has been to reduce the computational error at low cost in order to improve the long-term stability of constrained simulations of molecular dynamics.
+Our goal has been the efficient reduction of the computational error in order to improve the long-term stability of constrained simulations of molecular dynamics at low cost.
 We have now found that the output of GROMACS is not always amenable to Richardson's methods.
 In this paper we shall derive and illustrate the use of Richardson's method using a variety of numerical experiments.
 We identify two conditions that are not always satisfied by GROMACS and we demonstrate that each condition is necessary for the successful application of Richardson's method.
@@ -125,11 +125,11 @@ The following theorem shows that Richardson's error estimate is a good approxima
   \end{equation}
 \end{theorem}
 \begin{proof}
-  By assumption, there is a function $g(h)$ 
+  By assumption, there is a function $h \rightarrow g(h)$ 
   \begin{equation}
     T - A_h  = \alpha h^p + \beta h^q + g(h)
   \end{equation}
-  and constants $C>0$ and $h_0 > 0$ such that
+  as well as constants $C>0$ and $h_0 > 0$ such that
   \begin{equation}
     \forall h \leq h_0 \: : \: |g(h)| \leq Ch^r.
   \end{equation}
@@ -155,17 +155,17 @@ The following theorem shows that Richardson's error estimate is a good approxima
   \end{equation}
   The theorem follows immediately from this expression because $q < r$.
 \end{proof}
-We shall now demonstrate how to investigate the existence of an asymptotic error expansion experimentally.
+We shall now show how to demonstrate the existence of an asymptotic error expansion experimentally.
 We define Richardson's fraction $F_h$ using the expression
 \begin{equation}
   F_h = \frac{A_{2h} - A_{4h}}{A_h - A_{2h}}.
 \end{equation}
 The behavior of the function $h \rightarrow F_h$ is described by the following theorem.
-\begin{theorem} Assume that $T-A_h$ satisfies equation \eqref{equ:aex} and let $(m,n)$ be given by
+\begin{theorem} If $E_h$ satisfy equation \eqref{equ:aex} and if $(m,n)$ is given by
   \begin{equation}
-    m = q - p, \quad n = r - p.
+    m = q - p, \quad n = r - p,
   \end{equation}
-  Then Richardson's fraction satisfies
+  then Richardson's fraction $F_h$ satisfies
   \begin{equation}
     F_h \rightarrow 2^p, \quad h \rightarrow 0_+
   \end{equation}
@@ -221,7 +221,7 @@ is a good approximation for $h$ sufficiently small. In particular, we note that 
 \section{Elementary examples}
 
 The theory applies to the difference $T - A_h$ between the target value $T$ and the exact value of the approximation $A_h$.
-In practice, the computed value $\hat{A}_h$ is different from the exact value $A_h$. However, it is often possible to assert that $A_h - \hat{A}_h$ is irrelevant and issue precise estimates of the error $T - \hat{A}_h$. We shall now demonstrate this procedure. To this end, we consider the familiar problem of computing definite integrals
+In practice, the computed value $\hat{A}_h$ is different from the exact value $A_h$. However, it is often possible to assert that $A_h - \hat{A}_h$ is irrelevant and issue precise estimates of the error $T - \hat{A}_h$. We shall now demonstrate the procedure. To this end, we consider the familiar problem of computing definite integrals
 \begin{equation} \label{equ:integral}
   T = \int_{a}^b f(x) dx
 \end{equation}
@@ -328,7 +328,7 @@ In fact, the corresponding relative error decreases when $k$ increases and we re
 \end{figure}
 
 We mention in passing that low order methods are more practical than high order methods in the sense that low order methods tend to have asymptotic ranges that are larger than high order methods.
-% This is due to the fact the function $h \rightarrow F_h$ suffers from subtractive cancellation when $h$ is sufficiently small. This issue is more acute for high order methods than for low order methods, because $A_h$ tends to $T$ more rapidly for high order methods than for low order methods.
+This is due to the fact the function $h \rightarrow F_h$ suffers from subtractive cancellation when $h$ is sufficiently small. This issue is more acute for high order methods than for low order methods, because $A_h$ tends to $T$ more rapidly for high order methods than for low order methods.
 
 
 \section{Practical examples}
@@ -385,33 +385,30 @@ Firstly, the potential energy and especially the kinetic energy exhibits violent
 \begin{figure}
   \centering
   \includegraphics[width=\linewidth]{oplsaaltol04.pdf}
-  \caption{The evolution of the mechanical energy of a molecule as a function of the number of time-steps used to cover $1$ps of real time. The force-field is OPLSAAL and the constraint equations are not solved with great accuracy, i.e. ${\tt tol} = 10^{-4}$. } \label{fig:oplsaaltol04}
+  \caption{The evolution of the kinetic and potential energy of a system as the number of time-steps used to cover $1$ ps of real time.} \label{fig:oplsaaltol04}
 \end{figure}
 
 Secondly, the total energy exhibits grows linearly with the number of time steps. This is not surprising as we expect the rounding error to grown with the number of operations.
 
-%The function {\tt gromacs\_fit} does a linear least squares fit of the total energy {\tt etol} to two models $M_1$ and $M_2$ where model $M_p$ assumes that ${\tt etol} = T + C_1n + C_2/n^p$ for suitable constants $T, C_1, C_2$. Since the SHAKE algorithm is 2nd order accurate in the time step, one would expect model $M_2$ to provide the best fit, but for this data model $M_1$ is a marginally better. While mildly interesting, this issue is vastly less important than the final point.
+Thirdly, if the computed energies for ${\tt tol} = 10 ^{-12}$ follow an asymptotic error expansion, then the commonly used time step of $1$ fs ($n=1000$ in this case) is \emph{not} well inside the asymptotic range. Why is this? If we where in the asymptotic range, then the error $T - \hat{A}_h$ would very nearly obey a power law and $\hat{A}_h \approx T - \alpha h^p$ would be a good approximation for some power $p>0$. In particular, the $\hat{A}_h$  would behave in be \emph{monotone} manner and the tiny oscillations that we have recorded would not be present.
 
 \begin{figure}
   \centering
   \includegraphics[width=\linewidth]{oplsaaltol12.pdf}
-   \caption{The evolution of the mechanical energy of a molecule as a function of the number of time-steps used to cover $1$ps of real time. The force-field is OPLSAAL and the constraint equations are solved with great accuracy, i.e. ${\tt tol} = 10^{-12}$.} \label{fig:oplsaaltol12}
+   \caption{The evolution of the kinetic and potential energy of a system as the number of time-steps used to cover $1$ ps of real time.} \label{fig:oplsaaltol12}
 \end{figure}
 
-
-Thirdly, if the computed energies for ${\tt tol} = 10 ^{-12}$ follow an asymptotic error expansion, then the commonly used time step of $1$ fs ($n=1000$ in this case) is \emph{not} in the asymptotic range. Why is this? If we where in the asymptotic range, then the computed energies $\hat{A}_h$ would follow a power-law and $\hat{A}_h \approx T - \alpha h^p$ would be a good approximation for some power $p>0$. In particular, the behaviour would be \emph{monotone} and the tiny oscillations that we have recorded would not be present.
 
 \section{The difference between succes and failure}
 
 In this section we identify two conditions that are not always satisfied by the GROMACS library and we demonstrate that they are necessary for the succesful application of Richardson's techniques.
 
-\section{The need for sufficient accuracy}
+\subsection{The need for sufficient accuracy}
 
-The output of GROMACS is clearly dependent how accurate we solve the constraint equations. When computing the range of a howitzer it necessary to adjust the final time-step to place the shell directly on the ground. In the case of Euler's explicit method, the relevant equation is linear, but in general this is nonlinear equation. The function {\tt maxrange\_rk1\_mwe1} and it is companion {\tt maxrange\_rk2\_mwe2} both use the bisection method to compute the final time step with an error that is bounded by $h\cdot\text{tol}$ using a wide range of tolerance {\tt tol}.
-
+When computing the range of a howitzer it necessary to adjust the final time-step to place the shell on the ground with great accuracy. In the case of Euler's explicit method, the relevant equation is linear, but in general it is a nonlinear equation. The function {\tt maxrange\_rk1\_mwe1} and it is companion {\tt maxrange\_rk2\_mwe2} both use the bisection method to compute the final time step with an error that is bounded by $h\cdot\text{tol}$ using a wide range of tolerance {\tt tol}.
 
 \begin{figure}
-  \includegraphics[width=\linewidth]{maxrange_rk2_tol11.png} \caption{The evolution of $F_h$ for the maximum range of 6 different shells using using Heyn's method (\text{'rk2'}) and $\text{tol} = 2^{-11}$.}
+  \includegraphics[width=\linewidth]{maxrange_rk2_tol11.pdf} \caption{The evolution of $F_h$ for the maximum range of 3 different shells using Heyn's method (\text{'rk2'}) and $\text{tol} = 2^{-11}$.}
   \label{fig:maxrange_rk2_tol11}
 \end{figure}
 
@@ -419,46 +416,46 @@ It is instructive to observe the consequences of solving this equation inaccurat
 
 
 \begin{figure}
-  \includegraphics[width=\linewidth]{maxrange_rk2_tol25.png} \caption{The evolution of $F_h$ for the maximum range of 6 different shells computed using Heyn's method (\text{'rk2'}) and $\text{tol} = 2^{-25}$.}
+  \includegraphics[width=\linewidth]{maxrange_rk2_tol25.pdf} \caption{The evolution of $F_h$ for the maximum range of 6 different shells computed using Heyn's method (\text{'rk2'}) and $\text{tol} = 2^{-25}$.}
   \label{fig:maxrange_rk2_tol25}
 \end{figure}
 
-When the tolerance is large (Figure~\ref{fig:maxrange_rk2_tol11}) there is no evidence that an asymptotic error expansion exists and is no reason to trust Richardson's error estimate. When the tolerance is small (Figure~\ref{fig:maxrange_rk2_tol25}), there is evidence to suggest that asymptotic error expansion exists and an asymptotic range can easily be identified for shells of type G1, G5 and G8. If we do not know which tolerance is sufficient and if an error estimate is required, then our safest course of action is solve all central equations as accurately as the hardware will allow.
+When the tolerance is large (Figure~\ref{fig:maxrange_rk2_tol11}) there is no evidence that an asymptotic error expansion exists and is no reason to trust Richardson's error estimate. When the tolerance is small (Figure~\ref{fig:maxrange_rk2_tol25}), there is evidence to suggest that asymptotic error expansion exists, but it is not trivial to determine an asymptotic range.  Regardless, it is clear that if we do not know which tolerance is sufficient and if an error estimate is required, then our safest course of action is solve all equations as accurately as the hardware will allow.
 
-\section{The need for sufficient smoothness}
+\subsection{The need for sufficient smoothness}
 
-It is common to ignore the interaction between atoms that are far away. This can be done by setting force-fields to zero outside of a sufficiently large ball. There is more than way to accomplish this effect and the documentation for GROMACS 2021 discusses the use of force-fields that are of class $C^1$ rather than $C^{\infty}$.
+In molecular dynamics, it is common to ignore the interaction between atoms that are far away. This can be done by setting force-fields to zero outside of a sufficiently large ball. There is more than way to accomplish this effect and the documentation for GROMACS 2021 discusses the use of force-fields that are of class $C^1$ rather than $C^{\infty}$.
 
-In order to explore the importance of smoothness we have conducted a sequence of simple experiments. We simulated the motion of a small set of identical ions moving in a liquid. The ions repell each other electrostatically, but they are pulled towards the origo by independent and identical springs that obey Hooke's law. The friction between each ion and the liquid is proportional to its velocity. This ensures the ions ultimately come to rest in a stable configuration. 
-Let $f$ denote the forcefield generated by an ion located at $0$ with charge $q$. Then
-\begin{equation}
-  f(\bm{r}) = c \frac{q}{\|\bm{r}\|^2} \frac{\bm{r}}{\|\bm{r}\|}
-\end{equation}
-where $c > 0$ is a suitable constant. The script {\tt iontrap\_mwe1} does not modify the electrostatic force-fields and the $m=4$ ions ultimately form a regular tetrahedoron with edge length $\rho > 0$.
-In {\tt iontrap\_mwe1} we do not modify the electrostatic force-fields and the $m=4$ ions ultimately form a regular tetrahedron with edge length $\rho$.
-In {\tt iontrap\_mwe2} and {\tt iontrap\_mwe4} we replace $f$ with
-\begin{equation}
-  f_k(\bm{r}) = f(\bm{r}) g_k(r)
-\end{equation}
-where $g_k$ is a switching function that assumes values in $[0,1]$. The function $g_2$ has a jump discontinuity and satisfies $g_1(r) = 1$ for $r < \rho$ and $g_1(r) = 0$ for $r \ge \rho$. The function $g_4$ is of class $C^\infty$ and satifies $g_4(r) = 1$ for $r < 0.5 \rho$ and $g_4(r) = 0$ for $r \ge 0.95 \rho$. It is clear that changing the force-fields must impact the simulation, but can we actually estimate the discretization error for the kinetic energy? Figure \ref{fig:iontrap_mwe1}, \ref{fig:iontrap_mwe2}, \ref{fig:iontrap_mwe4} show the evolution of Richardson's fraction for the total kinetic energy at the end of each simulation.
-
-\begin{figure}
+\begin{figure}[h!]
   \centering
   \includegraphics[width=\linewidth]{iontrap_mwe1.pdf}
   \caption{The evolution of Richardson's fraction for the total kinetic energy of a system of $m=4$ ions using Runge-Kutta methods of order $p \in \{1,2,3,4\}$}
   \label{fig:iontrap_mwe1}
 \end{figure}
 
-When the force-fields are not perturbed, Figure~\ref{fig:iontrap_mwe1}, there experiments supports the conjecture that the exists an asymptotic error expansion and we can clearly identify an asymptotic range for each of the 4 Runge-Kutta methods used to integrate the dynamical system. 
 
-\begin{figure}
+In order to explore the importance of smoothness we have conducted a sequence of simple experiments. We simulated the motion of a small set of identical ions moving in a liquid. The ions repel each other electrostatically, but they are pulled towards the origo by independent and identical springs that obey Hooke's law. The friction between each ion and the liquid is proportional to its velocity. This ensures the ions eventually come to rest in a stable configuration. 
+Let $\bm{f}$ denote the forcefield generated by an ion located at $0$ with charge $q$. Then
+\begin{equation}
+  \bm{f}(\bm{r}) = c \frac{q}{\|\bm{r}\|^2} \frac{\bm{r}}{\|\bm{r}\|}
+\end{equation}
+where $c > 0$ is a suitable constant. The script {\tt iontrap\_mwe1} does not modify the electrostatic force-fields and the $m=4$ ions ultimately form a regular tetrahedoron with edge length $\rho > 0$.
+The scripts {\tt iontrap\_mwe2} and {\tt iontrap\_mwe4} replace $f$ with
+\begin{equation}
+  f_k(\bm{r}) = f(\bm{r}) g_k(r), \quad k \in \{2, 4\{
+\end{equation}
+where $g_k$ is a switching function that assumes values in $[0,1]$. The function $g_2$ has a jump discontinuity and satisfies $g_1(r) = 1$ for $r < \rho$ and $g_1(r) = 0$ for $r \ge \rho$. The function $g_4$ is of class $C^\infty$ and satifies $g_4(r) = 1$ for $r < 0.5 \rho$ and $g_4(r) = 0$ for $r \ge 0.95 \rho$. It is clear that changing the force-fields must impact the simulation, but can we actually estimate the discretization error for the kinetic energy? Figure \ref{fig:iontrap_mwe1}, \ref{fig:iontrap_mwe2}, \ref{fig:iontrap_mwe4} show the evolution of Richardson's fraction for the kinetic energy at the end of each simulation.
+
+When the force-fields are not perturbed, Figure~\ref{fig:iontrap_mwe1}, the experiments supports the conjecture that the exists an asymptotic error expansion and we can clearly identify an asymptotic range for each of the 4 Runge-Kutta methods used to integrate the dynamical system. 
+
+\begin{figure}[h!]
   \centering
   \includegraphics[width=\linewidth]{iontrap_mwe2.pdf}
   \caption{The evolution of Richardson's fraction for the total kinetic energy of a system of $m=4$ ions using Runge-Kutta methods of order $p \in \{1,2,3,4\}$. The electrostatic force-fields are zero outside a small sphere and exhibit jump discontinuities.}
   \label{fig:iontrap_mwe2}
 \end{figure}
 
-When the force-fields are truncated and jump-discontinuities are introduced, Figure~\ref{fig:iontrap_mwe2}, there is no evidence to suggest that there exists an asymptotic error expansion and there is no reason to suspect that Richardson's error estimate is accurate.
+When the force-fields are truncated and jump-discontinuities are introduced, Figure~\ref{fig:iontrap_mwe2}, there is no evidence to suggest that there exists an asymptotic error expansion and there is no reason to suspect that Richardson's error estimate is accurate. We cannot assert that the computational error is irrelevant and without an estimate of the discretization error we cannot quantify the impact of changing the force-field.
 
 \begin{figure}
   \centering
