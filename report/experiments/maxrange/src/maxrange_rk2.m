@@ -120,7 +120,7 @@ for t=1:numtol
         sf.Title=title(tit{j});
 
         % Set the fontsize for the axes
-        ax=fig.CurrentAxes; ax.FontSize=20; ax.GridLineWidth=2;
+        ax=fig.CurrentAxes; ax.FontSize=20; % ax.GridLineWidth=2;
 
         % Set the linewidth for the plot
         plt.LineWidth=2;
