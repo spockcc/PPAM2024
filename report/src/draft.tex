@@ -57,49 +57,46 @@
 %
 \maketitle % typeset the header of the contribution
 %
-\begin{abstract} We consider the problem of estimating the error when solving a system of differential algebraic equations. Richardson extrapolation is a classical technique that can be used to judge when rounding errors are irrelevant and estimate the discretization error. We have simulated molecular dynamics with constraints using the GROMACS library and found that the output is not always ameable to Richardson's method. We derive and illustrate Richardson's method using a variety of numerical experiments. We identify two necessary conditions that are not always satisfied by the GROMACS library.
-\keywords{}
+\begin{abstract} We consider the problem of estimating the error when solving a system of differential algebraic equations. Richardson extrapolation is a classical technique that can be used to judge when rounding errors are irrelevant and estimate the discretization error. We have simulated molecular dynamics with constraints using the GROMACS library and found that the output is not always ameable to Richardson extrapolation. We derive and illustrate Richardson extrapolation using a variety of numerical experiments. We identify two necessary conditions that are not always satisfied by the GROMACS library.
+\keywords{error estimation, Richardson extrapolation, multi-body dynamics, GROMACS}
 \end{abstract}
 %
 %
 %
-
-\section{Motivation} Consider the problem resolving the motion of a system of atoms moving in a force-field $\bm{f}$ subject to a set of constraints $g$. In this case, Newton's 2nd law takes the form the following system of differential algebraic equations
+\section{Motivation} Consider the problem simulating the motion of a system of atoms moving in a force-field $\bm{f}$ subject to a set of constraints $\bm{g}$. In this case, Newton's 2nd law takes the form of the following system of differential algebraic equations
 \begin{align}
-  \bm{q}'(t) &= \bm{v}(t) \\
-  \bm{M}\bm{v}'(t) &= \bm{f}(\bm{q}(t)) - \bm{G}(\bm{q}(t))^T\bm{\lambda}(t) \\
+  \bm{q}'(t) &= \bm{v}(t), \\
+  \bm{M}\bm{v}'(t) &= \bm{f}(\bm{q}(t)) - \bm{G}(\bm{q}(t))^T\bm{\lambda}(t), \\
   \bm{g}(\bm{q}(t)) &= \bm{0}. 
 \end{align}
 The vector $\bm{q}$ represents the position of the atoms.
 The vector $\bm{v}$ represents the velocities of the atoms. The function $\bm{f}$ represents the force-field acting on the atoms.
 The nonsingular diagonal matrix $\bm{M}$ lists the masses of the atoms.
 The function $\bm{G}$ is the Jacobian of the constraint function $\bm{g}$ and $\bm{\lambda}$ is a vector of Lagrange multipliers.
-In the field of molecular dynamics, the standard algorithm for this problem is the SHAKE algorithm.
+In the field of molecular dynamics, the standard algorithm for this problem is the SHAKE algorithm \cite{shake1977}
 It uses a pair of staggered grids with uniform step size $h$ and takes the form
 \begin{align}
   \bm{v}_{n+1/2} &= \bm{v}_{n-1/2} + \bm{h} \bm{M}^{-1} \left( \bm{f}(\bm{q}_n) - \bm{G}(\bm{q}_n)^T \bm{\lambda}_n \right), \\
   \bm{q}_{n+1} &= \bm{q}_n + h \bm{v}_{n + 1/2}, \\
-  \bm{g}(\bm{q}_{n+1}) &= \bm{0}.
+  \bm{g}(\bm{q}_{n+1}) &= \bm{0}. \label{equ:constraint}
 \end{align}
-The constraint equation is a usually a nonlinear equation with respect to the Lagrange multiplier $\bm{\lambda}_n$. 
+The constraint equation \eqref{equ:constraint} is usually a nonlinear equation with respect to the Lagrange multiplier $\bm{\lambda}_n$. 
 Now let $T \in \mathbb{R}$ denote any target value that can be computed in terms of the trajectory $t \rightarrow (q(t), v(t))$ and let $A_h$ denote the corresponding value obtained from the output of the SHAKE algorithm. It is clear that $T$ and $A_h$ are both functions of the force-field $\bm{f}$ and the question of adjusting $\bm{f}$ to match the outcome of a physical experiment naturally suggests itself. Let therefore $T_0 \in \mathbb{R}$ be given and consider the problem of solving the equation
 \begin{equation}
   T_0 = T(\bm{f})
 \end{equation}
-with respect to $\bm{f}$. The fundamental problem is that we cannot compute the exact values of $T(\bm{f})$ and $A_h(\bm{f})$. We must contend with the fact that we can hardly solve the constraint equations exactly nor can we avoid rounding errors. Let $\hat{A}_h(\bm{f}, \tau, u)$ denote the value returned by our computer when solving the constraint equations with a relative error bounded by $\tau$ and using floating point arithmetic with unit roundoff $u$. Suppose that $T_0 - A_h(\bm{f}, \tau, u)$ is small. Can we assert that $T_0 - T(\bm{f})$ is small? The triangle inequality implies the following inequality
+with respect to $\bm{f}$. The fundamental problem is that we cannot compute the exact values of $T(\bm{f})$ and $A_h(\bm{f})$. We must contend with the fact that we cannot expect to solve the constraint equations exactly nor can we avoid rounding errors in general. Let $\hat{A}_h(\bm{f}, \tau, u)$ denote the value returned by our computer when solving the constraint equations with a relative error bounded by $\tau$ and using floating point arithmetic with unit roundoff $u$. Suppose that $T_0 - A_h(\bm{f}, \tau, u)$ is small. Can we conclude that $T_0 - T(\bm{f})$ is small? The triangle inequality provided the following bound:
 \begin{equation}
   |T_0 - T(\bm{f}) | \leq  |T_0 - A_h(\bm{f},\tau,u)| + |A_h(\bm{f}) - A_h(\bm{f},\tau,u)| + |T(\bm{f}) - A_h(\bm{f})|.
 \end{equation}
-We conclude that $T_0 - T(\bm{f})$ is small, if the computational error $A_h(\bm{f}) - A_h(\bm{f}, \tau, u)$ and the discretization error $T(\bm{f}) - A_h(\bm{f})$ are both small. If we cannot control these errors, then we cannot say with certainty that our model delivers a good approximation of the physical reality.
+We conclude that $T_0 - T(\bm{f})$ is small, if the \emph{computational error} $A_h(\bm{f}) - A_h(\bm{f}, \tau, u)$ and the \emph{discretization error} $T(\bm{f}) - A_h(\bm{f})$ are both small. If we cannot control these errors, then we cannot say with certainty that our model delivers a good approximation of the physical reality.
 
-As we shall demonstrate, Richardson extrapolation \cite{richardson1927} can often be used to determine when computational errors are insignificant and estimate the discretization error.
-In the past, we have sought to improve the solution of nonlinear constraint equations in the context of molecular dynamics by integrating Newton's method into the GROMACS library \cite{villelas2023accurate}
-Our goal has been the efficient reduction of the computational error in order to improve the long-term stability of constrained simulations of molecular dynamics at low cost.
-We have now found that the output of GROMACS is not always amenable to Richardson's methods.
-In this paper we shall derive and illustrate the use of Richardson's method using a variety of numerical experiments.
-We identify two conditions that are not always satisfied by GROMACS and we demonstrate that each condition is necessary for the successful application of Richardson's method.
-Our data and software is freely available from our GitHub along with every script and function needed to regenerate every number, table and figure from scratch. We encourage the reader to clone our repository and execute all MATLAB functions that are explicitly named in this manuscript, such as {\tt plot\_shells}.
+Richardson extrapolation is a classical technique that is widely used in computational science and engieering applications \cite{roache1998}. It can be used to estimate size of discretization errors or improve the accuracy of an existing solution \cite{zahari2018} and it has applications in event location \cite{mannshardt1978one} as well. As we shall demonstrate, Richardson extrapolation can often be used to determine when computational errors are insignificant.
 
+In this paper we derive and illustrate the use of Richardson extrapolation using a variety of numerical experiments.
+We demonstrate that the output of the GROMACS \cite{gromacs2005} library for molecular dynamics is not always ameable to Richardson extrapolation. 
+We identify two conditions that are not always satisfied by GROMACS and we demonstrate that each condition is necessary for the successful application of Richardson extrapolation
+Our data and software is freely available from our GitHub \cite{lorien2024ppam} along with every script and function needed to replicate every number, table and figure from scratch. The names of our MATLAB functions are written with a typewriter font, e.g., \texttt{plot\_shells}.
 
 \section{Theory}
 
@@ -405,67 +402,59 @@ In this section we identify two conditions that are not always satisfied by the 
 \subsection{The need for sufficient accuracy}
 
 When computing the range of a howitzer it necessary to adjust the final time-step to place the shell on the ground with great accuracy. In the case of Euler's explicit method, the relevant equation is linear, but in general it is a nonlinear equation. The function {\tt maxrange\_rk1\_mwe1} and it is companion {\tt maxrange\_rk2\_mwe2} both use the bisection method to compute the final time step with an error that is bounded by $h\cdot\text{tol}$ using a wide range of tolerance {\tt tol}.
-
 \begin{figure}
   \includegraphics[width=\linewidth]{maxrange_rk2_tol11.pdf} \caption{The evolution of $F_h$ for the maximum range of 3 different shells using Heyn's method (\text{'rk2'}) and $\text{tol} = 2^{-11}$.}
   \label{fig:maxrange_rk2_tol11}
 \end{figure}
-
 It is instructive to observe the consequences of solving this equation inaccurately. Figures \ref{fig:maxrange_rk2_tol11} ($\text{tol} = 2^{-11}$) and Figures \ref{fig:maxrange_rk2_tol25} ($\text{tol} = 2^{-25}$) show the evolution of Richardson's fraction for two different values of the tolerance {\tt tol}.
-
-
 \begin{figure}
   \includegraphics[width=\linewidth]{maxrange_rk2_tol25.pdf} \caption{The evolution of $F_h$ for the maximum range of 3 different shells computed using Heyn's method (\text{'rk2'}) and $\text{tol} = 2^{-25}$.}
   \label{fig:maxrange_rk2_tol25}
 \end{figure}
-
 When the tolerance is large (Figure~\ref{fig:maxrange_rk2_tol11}) there is no evidence that an asymptotic error expansion exists and is no reason to trust Richardson's error estimate. When the tolerance is small (Figure~\ref{fig:maxrange_rk2_tol25}), there is evidence to suggest that asymptotic error expansion exists, but it is not trivial to determine an asymptotic range.  Regardless, it is clear that if we do not know which tolerance is sufficient and if an error estimate is required, then our safest course of action is solve all equations as accurately as the hardware will allow.
 
 \subsection{The need for sufficient smoothness}
 
-In molecular dynamics, it is common to ignore the interaction between atoms that are far away. This can be done by setting force-fields to zero outside of a sufficiently large ball. There is more than way to accomplish this effect and the documentation for GROMACS 2021 discusses the use of force-fields that are of class $C^1$ rather than $C^{\infty}$.
+In molecular dynamics, it is common to ignore the interaction between atoms that are far away. This can be done by setting force-fields to zero outside of a sufficiently large ball. There is more than way to accomplish this effect and the documentation for GROMACS 2021 discusses its use of force-fields that are not of class $C^{\infty}$.
 
 \begin{figure}[h!]
   \centering
   \includegraphics[width=\linewidth]{iontrap_mwe1.pdf}
-  \caption{The evolution of Richardson's fraction for the total kinetic energy of a system of $m=4$ ions using Runge-Kutta methods of order $p \in \{1,2,3,4\}$}
+  \caption{The evolution of $F_h$ for the total kinetic energy of a system of ions using integrators of order $p \in \{1,2,3,4\}$.}
   \label{fig:iontrap_mwe1}
 \end{figure}
 
-
-In order to explore the importance of smoothness we have conducted a sequence of simple experiments. We simulated the motion of a small set of identical ions moving in a liquid. The ions repel each other electrostatically, but they are pulled towards the origo by independent and identical springs that obey Hooke's law. The friction between each ion and the liquid is proportional to its velocity. This ensures the ions eventually come to rest in a stable configuration. 
+In order to explore the importance of smoothness we have simulated the motion of a set of identical ions moving in a liquid. The ions repel each other electrostatically, but they are pulled towards the origo by independent and identical springs that obey Hooke's law. The friction between each ion and the liquid is proportional to its velocity. The friction drains the energy and ensures that the ions eventually come to rest in a stable configuration. 
 Let $\bm{f}$ denote the forcefield generated by an ion located at $0$ with charge $q$. Then
 \begin{equation}
   \bm{f}(\bm{r}) = c \frac{q}{\|\bm{r}\|^2} \frac{\bm{r}}{\|\bm{r}\|}
 \end{equation}
 where $c > 0$ is a suitable constant. The script {\tt iontrap\_mwe1} does not modify the electrostatic force-fields and the $m=4$ ions ultimately form a regular tetrahedoron with edge length $\rho > 0$.
-The scripts {\tt iontrap\_mwe2} and {\tt iontrap\_mwe4} replace $f$ with
+The scripts {\tt iontrap\_mwe2} and {\tt iontrap\_mwe4} replace $\bm{f}$ with
 \begin{equation}
-  f_k(\bm{r}) = f(\bm{r}) g_k(r), \quad k \in \{2, 4\{
+  f_k(\bm{r}) = f(\bm{r}) g_k(r), \quad k \in \{2, 4\}
 \end{equation}
-where $g_k$ is a switching function that assumes values in $[0,1]$. The function $g_2$ has a jump discontinuity and satisfies $g_1(r) = 1$ for $r < \rho$ and $g_1(r) = 0$ for $r \ge \rho$. The function $g_4$ is of class $C^\infty$ and satifies $g_4(r) = 1$ for $r < 0.5 \rho$ and $g_4(r) = 0$ for $r \ge 0.95 \rho$. It is clear that changing the force-fields must impact the simulation, but can we actually estimate the discretization error for the kinetic energy? Figure \ref{fig:iontrap_mwe1}, \ref{fig:iontrap_mwe2}, \ref{fig:iontrap_mwe4} show the evolution of Richardson's fraction for the kinetic energy at the end of each simulation.
+where $g_k$ is a switching function that assumes values in $[0,1]$. The function $g_2$ has a jump discontinuity and satisfies $g_1(r) = 1$ for $r < \rho$ and $g_1(r) = 0$ for $r \ge \rho$. The function $g_4$ is of class $C^\infty$ and satifies $g_4(r) = 1$ for $r < 0.5 \rho$ and $g_4(r) = 0$ for $r \ge 0.95 \rho$. It is clear that changing the force-fields must impact the simulation, but can we estimate the discretization error and quantify this effect? Figure \ref{fig:iontrap_mwe1}, \ref{fig:iontrap_mwe2}, \ref{fig:iontrap_mwe4} show the evolution of Richardson's fraction for the kinetic energy at the end of each simulation.
 
 When the force-fields are not perturbed, Figure~\ref{fig:iontrap_mwe1}, the experiments supports the conjecture that the exists an asymptotic error expansion and we can clearly identify an asymptotic range for each of the 4 Runge-Kutta methods used to integrate the dynamical system. 
-
 \begin{figure}[h!]
   \centering
   \includegraphics[width=\linewidth]{iontrap_mwe2.pdf}
-  \caption{The evolution of Richardson's fraction for the total kinetic energy of a system of $m=4$ ions using Runge-Kutta methods of order $p \in \{1,2,3,4\}$. The electrostatic force-fields are zero outside a small sphere and exhibit jump discontinuities.}
+  \caption{The evolution of $F_h$ for the total kinetic energy of a system of ions using integrators of order $p$. The fields are zero outside a small sphere and discontinuous.}
   \label{fig:iontrap_mwe2}
 \end{figure}
-
-When the force-fields are truncated and jump-discontinuities are introduced, Figure~\ref{fig:iontrap_mwe2}, there is no evidence to suggest that there exists an asymptotic error expansion and there is no reason to suspect that Richardson's error estimate is accurate. We cannot assert that the computational error is irrelevant and without an estimate of the discretization error we cannot quantify the impact of changing the force-field.
-
+When the force-fields are truncated and discontinuities are introduced into the simulation, see Figure~\ref{fig:iontrap_mwe2}, there is no evidence to suggest that there exists an asymptotic error expansion and there is no reason to suspect that Richardson's error estimate is accurate.
 \begin{figure}
   \centering
   \includegraphics[width=\linewidth]{iontrap_mwe4.pdf}
-  \caption{The evolution of Richardson's fraction for the total kinetic energy of a system of $m=4$ ions using Runge-Kutta methods of order $p \in \{1,2,3,4\}$. The electrostatic force-fields are zero outside a small sphere, but the transition to zero is done smoothly.}
+  \caption{The evolution of $F_h$ for the total kinetic energy of a system of ions using integrators of order $p$. The fields are zero outside a small sphere, but smooth.}
   \label{fig:iontrap_mwe4}
 \end{figure}
-
-When the force-field vanish outside a small ball, but retain their smoothness, Figure~\ref{fig:iontrap_mwe4}, we retain the ability to judge when Richardson's error estimates are reliable.
+When the force-fields vanish outside a small ball but are smooth, see Figure~\ref{fig:iontrap_mwe4}, we retain the ability to judge when Richardson's error estimates are reliable and we can quantify the effect of changing the force-field.
 
 \section{Conclusion}
+
+A central task in the field of computational science is to fit a system of DAEs to the results of a physical experiment. It is often possible to assert when the computational errors are irrelevant and estimate the discretization error using Richardson extrapolation. This classical technique hinges on the existence of an asymptotic error expansion. However, if the functions that describe our problem are not sufficient differentiable or if the computational error is not sufficiently small, then we cannot estimate the discretization error and we lose the ability to evaluate our model. In the absence of further analysis, the best strategy is therefore to use functions that are smooth and solve all central equations as accurately as possible.
 
 \subsubsection{Acknowledgments}
 
