@@ -86,11 +86,11 @@ Now let $T \in \mathbb{R}$ denote any target value that can be computed in terms
 \begin{equation}
   T_0 = T(\bm{f})
 \end{equation}
-with respect to $\bm{f}$. The fundamental problem is that we cannot compute the exact values of $T(\bm{f})$ and $A_h(\bm{f})$. We must contend with the fact that we cannot solve the constraint equations exactly nor can we avoid rounding errors. Let $\hat{A}_h(\bm{f}, \tau, u)$ denote the value returned by our computer when solving the constraint equations with a relative error bounded by $\tau$ and using floating point arithmetic with unit roundoff $u$. Suppose that $T_0 - A_h(\bm{f}, \tau, u)$ is small. Can we show that $T_0 - T(\bm{f})$ is small? The triangle inequality implies the following inequality
+with respect to $\bm{f}$. The fundamental problem is that we cannot compute the exact values of $T(\bm{f})$ and $A_h(\bm{f})$. We must contend with the fact that we can hardly solve the constraint equations exactly nor can we avoid rounding errors. Let $\hat{A}_h(\bm{f}, \tau, u)$ denote the value returned by our computer when solving the constraint equations with a relative error bounded by $\tau$ and using floating point arithmetic with unit roundoff $u$. Suppose that $T_0 - A_h(\bm{f}, \tau, u)$ is small. Can we assert that $T_0 - T(\bm{f})$ is small? The triangle inequality implies the following inequality
 \begin{equation}
   |T_0 - T(\bm{f}) | \leq  |T_0 - A_h(\bm{f},\tau,u)| + |A_h(\bm{f}) - A_h(\bm{f},\tau,u)| + |T(\bm{f}) - A_h(\bm{f})|.
 \end{equation}
-We conclude that $T_0 - T(\bm{f})$ is small, if the computational error $A_h(\bm{f}) - A_h(\bm{f}, \tau, u)$ and the discretization error $T(\bm{f}) - A_h(\bm{f})$ are both small. If we cannot assert control over these errors, then we cannot say with certainty that our model delivers a good approximation of the physical reality.
+We conclude that $T_0 - T(\bm{f})$ is small, if the computational error $A_h(\bm{f}) - A_h(\bm{f}, \tau, u)$ and the discretization error $T(\bm{f}) - A_h(\bm{f})$ are both small. If we cannot control these errors, then we cannot say with certainty that our model delivers a good approximation of the physical reality.
 
 As we shall demonstrate, Richardson extrapolation \cite{richardson1927} can often be used to determine when computational errors are insignificant and estimate the discretization error.
 In the past, we have sought to improve the solution of nonlinear constraint equations in the context of molecular dynamics by integrating Newton's method into the GROMACS library \cite{villelas2023accurate}
@@ -328,7 +328,7 @@ In fact, the corresponding relative error decreases when $k$ increases and we re
 \end{figure}
 
 We mention in passing that low order methods are more practical than high order methods in the sense that low order methods tend to have asymptotic ranges that are larger than high order methods.
-This is due to the fact the function $h \rightarrow F_h$ suffers from subtractive cancellation when $h$ is sufficiently small. This issue is more acute for high order methods than for low order methods, because $A_h$ tends to $T$ more rapidly for high order methods than for low order methods.
+This is due to the fact the function $h \rightarrow F_h$ suffers from subtractive cancellation when $h$ is sufficiently small. This issue is more acute for high order methods than for low order methods, because $A_h$ tends to $T$ much more rapidly for high order methods than for low order methods.
 
 
 \section{Practical examples}
@@ -349,7 +349,6 @@ For each drag coefficient our target value $T$ is the maximum range of the shell
 For each drag coefficient and for each value of the time step $h$, a range function is defined which returns the range of the shell as a function of the howitzers elevation $\theta$.
 The range functions are unimodal and the maximum range is found using the golden section search algorithm.
 The initial search bracket is $[0,\pi/2$] and this bracket is systematically reduced in length until it is shorter than $\frac{\pi}{2}u$.
-
 The script will either read the raw data from a file or generate it from scratch. In any case, the script produces several figures and tables including Figure \ref{fig:maxrange_rk1_table_tol53} and Figure \ref{fig:maxrange_rk1_fraction_tol53}. These two figures represent calculations where the final time step is computed with an error that is bounded by $u h_{k}$ where $u = 2^{-53}$ is the double precision unit roundoff. Figure \ref{fig:maxrange_rk1_table_tol53} list the maximum range and the corresponding error estimate for each of the 6 shell types in our library using a time step of $h = 2^{-9} s$. In each case the error estimate suggests that the computed range is exact to number of figures shown. In particular, we see that a G7 type shell achieves a maximum range of 17.4 km and all other shells have ranges that are less than 16.9 km. It is however, a fallacy to conclude anything on the basis of this table alone. In each case, we need to assert that we are inside the asymptotic range and that the error estimates are reliable. To this end, we examine the evolution of Richardson's fraction for the maximum range of each shell, see Figure \ref{fig:maxrange_rk1_fraction_tol53}. For each of the 6 different drag coefficients we find that evolution of Richardson's fraction supports an asymptotic error expansion with $(p,q) = (1,2)$. This result is consistent with the use of Euler's explicit method which is 1st order accurate in the time step. We observe that for each drag coefficient, $k=12$ is still inside the asymtotic range and we have no reason to doubt the magnitude of the error estimate. We conclude that the best model for the D-20 howitzer is in fact the G7 shell.
 
 \begin{figure}
@@ -370,7 +369,7 @@ The script will either read the raw data from a file or generate it from scratch
 \begin{figure}[t!]
   \centering
   \includegraphics[width=\linewidth]{maxrange_rk1_tol53.pdf}
-  \caption{The evolution of Richardson's fraction corresponding to the maximum range of 6 different shells fired from the D-20 howitzer.} \label{fig:maxrange_rk1_fraction_tol53}
+  \caption{The evolution of Richardson's fraction corresponding to the maximum range of 3 different shells fired from the D-20 howitzer.} \label{fig:maxrange_rk1_fraction_tol53}
 \end{figure}
 
 \subsection{An unsuccesful application of the theory}
@@ -380,7 +379,7 @@ Moreover, we used two different values of the tolerance $\tau$ for the SHAKE alg
 For each experiment, we computed the total kinetic and potential energy of the system at the end of the simulation.
 The function {\tt gromacs\_figures} will generate Figure~\ref{fig:oplsaaltol04} and Figure~\ref{fig:oplsaaltol12} for the OPLS-AA/L force-file and similar figures for CHARMM36. These figures display the mechanical energies of the molecule at the end of the simulation as a function of the total number $n$ of time steps used to cover the interval. The figures have several features of interest.
 
-Firstly, the potential energy and especially the kinetic energy exhibits violent oscillations when the tolerance is large, i.e, $\tau = 10^{-4}$. The amplitude of the oscillations is reduced when $\tau = 10^{-12}$. We expect the solution of the underlying differential algebraic equation to behave nicely, but we have no such expection the computed approximation unless $\tau$ is very small. 
+Firstly, the potential energy and especially the kinetic energy exhibits violent oscillations when the tolerance is large, i.e, $\tau = 10^{-4}$. The amplitude of the oscillations is reduced when $\tau = 10^{-12}$. We expect the solution of the underlying differential algebraic equation to behave nicely, but we have no such expectation for the computed approximation unless $\tau$ is very small. 
 
 \begin{figure}
   \centering
@@ -416,7 +415,7 @@ It is instructive to observe the consequences of solving this equation inaccurat
 
 
 \begin{figure}
-  \includegraphics[width=\linewidth]{maxrange_rk2_tol25.pdf} \caption{The evolution of $F_h$ for the maximum range of 6 different shells computed using Heyn's method (\text{'rk2'}) and $\text{tol} = 2^{-25}$.}
+  \includegraphics[width=\linewidth]{maxrange_rk2_tol25.pdf} \caption{The evolution of $F_h$ for the maximum range of 3 different shells computed using Heyn's method (\text{'rk2'}) and $\text{tol} = 2^{-25}$.}
   \label{fig:maxrange_rk2_tol25}
 \end{figure}
 
