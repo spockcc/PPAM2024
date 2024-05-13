@@ -6,7 +6,7 @@ The reader should clone the repository.
 
 This is the structure of the repository
 .
-├── gromacs-2021
+├── gromacs-2021 </br>
 ├── gromacs_install_double.sh
 ├── gromacs_process_results.py
 ├── gromacs_run.sh
