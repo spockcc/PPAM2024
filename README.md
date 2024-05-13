@@ -2,7 +2,7 @@ This repository contains all software and data necessary to replicated every num
 This manuscript has been submitted to the conference Parallel Processing and Applied Mathematics, PPAM-2024.
 The authors are Carl Chrisian Kjelgaard Mikkelsen (spock@cs.umu.se) from Umeaa University, Sweden and Lorien Lopez-Villellas (lorien.lopez@bsc.se) from Barcelona Supercomputing Center, Spain.
 
-The reader should clone the repository. 
+The reader who wishes to replicate the experiments or examine the output in greater detail should clone the repository. 
 
 This is the structure of the repository</br>
 . </br>
