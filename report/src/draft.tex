@@ -94,7 +94,8 @@ We conclude that $T_0 - T(\bm{f})$ is small, if the \emph{computational error} $
 Richardson extrapolation is a classical technique that is widely used in computational science and engineering applications \cite{roache1998}. It can be used to estimate the size of discretization errors or improve the accuracy of an existing solution \cite{zahari2018} and it has applications in event location \cite{mannshardt1978one} as well. As we shall demonstrate, Richardson extrapolation can often be used to determine when computational errors are insignificant.
 
 In this paper we derive and illustrate the use of Richardson extrapolation using a variety of numerical experiments.
-We demonstrate that the output of the GROMACS \cite{gromacs2005} library for molecular dynamics is not always amenable to Richardson extrapolation. 
+GROMACS is a state-of-the-art library for molecular dynamics that is widely used in academia \cite{gromacs2005}.
+We demonstrate that the output of the GROMACS is not always amenable to Richardson extrapolation. 
 We identify two conditions that are not always satisfied by GROMACS and we demonstrate that each condition is necessary for the successful application of Richardson extrapolation.
 Our data and software is freely available from our GitHub \cite{lorien2024ppam} repository along with every script and function needed to replicate every number, table and figure from scratch. The names of our MATLAB functions are written with a typewriter font, e.g., \texttt{plot\_shells}.
 
