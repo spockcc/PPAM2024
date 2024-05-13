@@ -1,8 +1,5 @@
 % Generate figures from GROMACS experiments by Lorien Lopez-Villellas
 
-% PROGRAMING by Carl Christian Kjelgaard Mikkelsen (spock@cs.umu.se)
-%  Spring 2024  Initial programming and testing
-
 % Set the path to figures
 figpath='../experiments/gromacs/fig/';
 
@@ -21,7 +18,7 @@ for i=1:4
     aux=c{i}.data; field=c{i}.field; tol=c{i}.tol;
 
     % Rename the columns to reduce the chance of misprints
-    ekin=aux(:,3); epot=aux(:,4); % etol=ekin+epot;
+    ekin=aux(:,3); epot=aux(:,4); 
 
     % Call specialized plotting routine
     [fig, ax]=gromacs_plot(field, tol, n, ekin, epot);
