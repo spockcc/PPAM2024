@@ -4,8 +4,8 @@ The authors are Carl Chrisian Kjelgaard Mikkelsen (spock@cs.umu.se) from Umeaa U
 
 The reader should clone the repository. 
 
-This is the structure of the repository
-.
+This is the structure of the repository</br>
+. </br>
 ├── gromacs-2021 </br>
 ├── gromacs_install_double.sh
 ├── gromacs_process_results.py
