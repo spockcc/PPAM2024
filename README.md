@@ -7,25 +7,25 @@ The reader should clone the repository.
 This is the structure of the repository</br>
 . </br>
 ├── gromacs-2021 </br>
-├── gromacs_install_double.sh
-├── gromacs_process_results.py
-├── gromacs_run.sh
-├── lysozyme
-├── report
-└── requirements.txt
+├── gromacs_install_double.sh</br>
+├── gromacs_process_results.py</br>
+├── gromacs_run.sh</br>
+├── lysozyme</br>
+├── report</br>
+└── requirements.txt</br>
 
 If the reader does not wish to work with GROMACS, then the only relevant folder is "report"
 We include the output from GROMACS in the form of MATLAB .mat files.
 This is the structure of the folder "report"
 
-.
-├── experiments
-├── fig
-├── makefile
-├── matlab
-├── readme.txt
-├── scripts
-└── src
+.</br>
+├── experiments</br>
+├── fig</br>
+├── makefile</br>
+├── matlab</br>
+├── readme.txt</br>
+├── scripts</br>
+└── src</br>
 
 The folders "experiment" and "matlab" should be added to the user's MATLAB path.
 Some of our MATLAB functions assume that the current folder is "matlab", so please run all functions from this folder to avoid errors.
