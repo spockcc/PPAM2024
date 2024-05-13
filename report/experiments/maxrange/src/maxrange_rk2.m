@@ -1,9 +1,19 @@
-% Compute the range of shells of different types
+% Compute the maximum range of the D-20 using different shells and RK2
+%
+% To generate the figures that fit in the manuscript leave ppam2024=true.
+% If you want all possible figures, set ppam2024=false
+
+
+% PROGRAMMING by Carl Christian Kjelgaard Mikkelsen (spock@cs.um.se
+%   Spring 2024   Initial programming and testing
 
 % Clear the work space
 clear;
 
-% Load the gun
+% Logical switch
+ppam2024=true;
+
+% Define the howitzer, atmosphere, gravity
 d20;
 
 % Load all shells
@@ -102,8 +112,10 @@ end
 % Allocate space for the data
 data=zeros(kmax,4,numshell,numtol);
 
+% Height of a single row of figures in pixels
+height=290;
 
-if (0==1)
+if (ppam2024==false)
     
     % Process all data and generate the plots
     for t=1:numtol
@@ -112,7 +124,7 @@ if (0==1)
         % Plan where to put the figure
         q=floor((t-1)/4); r=(t-1)-4*q;
         % Position on screen
-        fig.Position=[10+r*300 650-q*600 840 640];
+        fig.Position=[10+r*300 650-q*600 840 2*height];
         % Loop over the shell types
         for j=1:numshell
             % Apply Richardson extrapolation
@@ -146,7 +158,7 @@ else
         % Plan where to put the figure
         q=floor((t-1)/4); r=(t-1)-4*q;
         % Position on screen
-        fig.Position=[10+r*300 650-q*600 840 320];
+        fig.Position=[10+r*300 650-q*600 840 height];
         % Loop over G5, G6 and G7
         for j=1:6
             % Apply Richardson extrapolation
@@ -174,9 +186,6 @@ else
     end
     
 end
-
-
-
 
 % Obtain table parameters
 tp=table_param('rdif',data(:,:,1,numtol));

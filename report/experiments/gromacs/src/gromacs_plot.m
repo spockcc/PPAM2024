@@ -1,5 +1,7 @@
 function [fig, ax]=gromacs_plot(field, tol, n, ekin, epot)
 
+
+
 fig=figure(); fig.Position=[100 800 1800 600];
 
 subplot(1,2,1); 
@@ -19,18 +21,9 @@ ylabel('Potential energy (kJ/mol)');
 % Set the fontsize for the axes
 ax=fig.CurrentAxes; ax.FontSize=14; ax.LineWidth=2;
 
-% subplot(1,3,3); 
-% plt3=plot(n,etol); grid;
-% xlabel('number of steps');
-% ylabel('Total energy (kJ/mol)');
-% 
-% % Set the fontsize for the axes
-% ax=fig.CurrentAxes; ax.FontSize=20; ax.LineWidth=2;
-
 % Set the linewidth for the plot
 plt1.LineWidth=2;
 plt2.LineWidth=2;
-% plt3.LineWidth=2;
 
 % Set a common title
 tit=sgtitle(['Forcefield = ' field '     constraint tolerance = ' num2str(tol,'%.2e')]);

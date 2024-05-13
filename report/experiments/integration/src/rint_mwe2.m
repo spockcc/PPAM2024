@@ -1,7 +1,10 @@
-% Apply Richardson's techniques to integrating a smooth function
+% Numerical integration of a function that is smooth in all but one point.
 
 % PROGRAMMING by Carl Christian Kjelgaard Mikkelsen (spock@cs.umu.se)
-%   2024-04-09  Adapted from 5dv231ht23
+%   2024-04-09  Adapted from 5dv231ht23 taught by CCKM at UmU
+
+% Clear the work space
+clear;
 
 % Interval
 a=0; b=1; 
@@ -30,7 +33,7 @@ data=rint(f,a,b,rule,p,kmax,val);
 % Obtain table parameters
 tp=table_param('rdif',data);
 
-% Print the information nicely
+% Print the information nicely on the screen
 print_table(data,tp);
 
 % Define path to figures
@@ -49,9 +52,11 @@ axa=figa.CurrentAxes; axa.FontSize=20; % axa.GridLineWidth=2;
 % Set the linewidth for the plot
 plta.LineWidth=2;
 
+% Set the position and size
+figa.Position=[900 800 560 400];
+
 % Save the figure
-fname='rint_mwe2a.eps';
-saveas(figa,strcat(mypath,fname));
+fname='rint_mwe2a.eps'; saveas(figa,strcat(mypath,fname));
 
 % ////////////////////////////////////////
 % Generate Figure rint_mwe2b
@@ -76,6 +81,9 @@ axb=figb.CurrentAxes; axb.FontSize=20; % axb.GridLineWidth=2;
 
 % Set the linewidth for the plot
 pltb1.LineWidth=4; pltb2.LineWidth=4;
+
+% Set the position and size
+figb.Position=[900 800 560 400];
 
 % Save the figure
 fname='rint_mwe2b.eps';

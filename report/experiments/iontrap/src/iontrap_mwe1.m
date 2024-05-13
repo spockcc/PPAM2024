@@ -3,6 +3,9 @@
 % The force-fields are smooth and have infinite range
 % 
 
+% PROGRAMING by Carl Christian Kjelgaard Mikkelsen (spock@cs.umu.se)
+%  Spring 2024  Initial programming and testing
+
 % Clear the work space
 clear;
 
@@ -176,7 +179,7 @@ for j=1:nm
 end
 
 % Adjust graphics
-fig.Position=[300 800 1200 400];
+fig.Position=[300 800 1200 360];
 
 % Save the graphics
 saveas(fig,fname);

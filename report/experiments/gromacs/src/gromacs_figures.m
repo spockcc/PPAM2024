@@ -1,4 +1,7 @@
-% Generate figures from GROMACS experiments
+% Generate figures from GROMACS experiments by Lorien Lopez-Villellas
+
+% PROGRAMING by Carl Christian Kjelgaard Mikkelsen (spock@cs.umu.se)
+%  Spring 2024  Initial programming and testing
 
 % Set the path to figures
 figpath='../experiments/gromacs/fig/';

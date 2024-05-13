@@ -1,10 +1,24 @@
 % Ion trap with dampning
 % Runge-Kutta methods
-% The forcefield transitions smoothly to zero 
+% The force-fields transitions smoothly to zero 
+%
 
-% Set the central file name
-datpath='../experiments/iontrap/dat/';
-fname=strcat(datpath,"iontrap_mwe3.mat");
+% PROGRAMING by Carl Christian Kjelgaard Mikkelsen (spock@cs.umu.se)
+%  Spring 2024  Initial programming and testing
+
+% Clear the work space
+clear;
+
+% Set the main path
+mpath='../experiments/iontrap/';
+
+% Set the data path
+dpath=strcat(mpath,'dat/');
+dname=strcat(dpath,'iontrap_mwe3.mat');
+
+% Set the figure path
+fpath=strcat(mpath,'fig/');
+fname=strcat(fpath,'iontrap_mwe3.eps');
 
 % Check if raw data exists
 if ~isfile(fname)

@@ -1,13 +1,19 @@
-% Apply Richardson's techniques to integrating a smooth function
+% Numerical integration of a function that is everywhere smooth
 
 % PROGRAMMING by Carl Christian Kjelgaard Mikkelsen (spock@cs.umu.se)
-%   2024-04-09  Adapted from 5dv231ht23
+%   2024-04-09  Adapted from 5dv231ht23 taught by CCKM at UmU
+
+% Clear the work space
+clear;
 
 % Interval
 a=0; b=1; 
 
 % Function
 f=@(x)exp(x); 
+
+% Antiderivative
+F=@(x)exp(x)
 
 % Integration rule
 rule=@(y,a,b,N)trapezoid(y,a,b,N); 
@@ -19,7 +25,7 @@ p=2;
 kmax=20; 
 
 % True value of the integral 
-val=exp(1)-1;
+val=F(b)-F(a);
 
 % Apply Richardson's techniques
 data=rint(f,a,b,rule,p,kmax,val);
@@ -46,7 +52,8 @@ axa=figa.CurrentAxes; axa.FontSize=20; % axa.GridLineWidth=2;
 % Set the linewidth for the plot
 plta.LineWidth=2;
 
-% figa.Position=[900 800 700 400]
+% Set the position and size
+figa.Position=[900 800 560 400]
 
 % Save the figure
 fname='rint_mwe1a.eps'; saveas(figa,strcat(mypath,fname));
@@ -75,7 +82,8 @@ axb=figb.CurrentAxes; axb.FontSize=20; % axb.GridLineWidth=2;
 % Set the linewidth for the plot
 pltb1.LineWidth=4; pltb2.LineWidth=4;
 
-% figb.Position=[900 800 700 400]
+% Set the position and size
+figb.Position=[900 800 560 400];
 
 % Save the figure
 fname='rint_mwe1b.eps';
