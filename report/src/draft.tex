@@ -142,7 +142,7 @@ The following theorem shows that Richardson's error estimate is a good approxima
   \begin{equation}
     R_h = \frac{A_h - A_{2h}}{2^p - 1} = \alpha h^p + \frac{2^q-1}{2^p-1} \beta h^q + \frac{g(2h)-g(h)}{2^p-1}.
   \end{equation}
- This implies that
+  This implies that
   \begin{equation}
     \alpha h^p =  R_h - \frac{2^q-1}{2^p-1} \beta h^q + O(h^r).
   \end{equation}
@@ -218,7 +218,7 @@ is a good approximation for $h$ sufficiently small. In particular, we note that 
 \section{Elementary examples}
 
 The theory applies to the difference $T - A_h$ between the target value $T$ and the exact value of the approximation $A_h$.
-In practice, the computed value $\hat{A}_h$ is different from the exact value $A_h$. However, it is often possible to assert that $A_h - \hat{A}_h$ is irrelevant and issue precise estimates of the error $T - \hat{A}_h$. We shall now demonstrate the procedure. To this end, we consider the familiar problem of computing definite integrals
+In practice, the computed value $\hat{A}_h$ is different from the exact value $A_h$. However, it is often possible to assert that the computational error $A_h - \hat{A}_h$ is irrelevant and issue precise estimates of the error $T - \hat{A}_h$. We shall now demonstrate the procedure. To this end, we consider the familiar problem of computing definite integrals
 \begin{equation} \label{equ:integral}
   T = \int_{a}^b f(x) dx
 \end{equation}
@@ -234,7 +234,7 @@ In particular, $(p,q,r) = (2,4,6)$ when $f$ is everywhere smooth.
 \paragraph{Integration of a function that is everywhere smooth.}
 
 Let $f : [0, 1] \rightarrow \mathbb{R}$ be given by $f(x) = e^x$ and $T$ be given by equation \eqref{equ:integral}.
-The script {\tt rint\_mwe1} computes the composite trapezoidal sum $A_h$ using $h_k = 2^{-k}$ for $k \in \{0,1,\dots,20\}$ and generates \ref{fig:rint_mwe1a} and \ref{fig:rint_mwe1b}.
+The script {\tt rint\_mwe1} computes the composite trapezoidal sum $A_h$ using $h_k = 2^{-k}$ for $k \in \{0,1,\dots,19\}$ and generates \ref{fig:rint_mwe1a} and \ref{fig:rint_mwe1b}.
 The raw data shows that $\hat{A}_{h_k}$ approaches $4 = 2^2$ as $k$ increases and $k \in \{2,3,\dots,14\}$.
 This suggests that $p=2$.
 Figure \ref{fig:rint_mwe1a} illustrates the evolution of the \emph{computed} values of Richardson's fraction.
@@ -330,7 +330,7 @@ This is due to the fact the function $h \rightarrow F_h$ suffers from subtractiv
 
 \section{Practical examples}
 
-In this section we present the results of more elaborate experiments that highlight the practical limitations of Richardson's extrapolation.
+In this section we present the results of more elaborate experiments that highlight both the utility and the practical limitations of Richardson's extrapolation.
 
 \subsection{A successful application of the theory}
 
@@ -346,7 +346,7 @@ For each drag coefficient our target value $T$ is the maximum range of the shell
 For each drag coefficient and for each value of the time step $h$, a range function is defined which returns the range of the shell as a function of the howitzers elevation $\theta$.
 The range functions are unimodal and the maximum range is found using the golden section search algorithm.
 The initial search bracket is $[0,\pi/2$] and this bracket is systematically reduced in length until it is shorter than $\frac{\pi}{2}u$.
-The script will either read the raw data from a file or generate it from scratch. In any case, the script produces several figures and tables including Figure \ref{fig:maxrange_rk1_table_tol53} and Figure \ref{fig:maxrange_rk1_fraction_tol53}. These two figures represent calculations where the final time step is computed with an error that is bounded by $u h_{k}$ where $u = 2^{-53}$ is the double precision unit roundoff. Figure \ref{fig:maxrange_rk1_table_tol53} list the maximum range and the corresponding error estimate for each of the 6 shell types in our library using a time step of $h = 2^{-9} s$. In each case the error estimate suggests that the computed range is exact to number of figures shown. In particular, we see that a G7 type shell achieves a maximum range of 17.4 km and all other shells have ranges that are less than 16.9 km. It is however, a fallacy to conclude anything on the basis of this table alone. In each case, we need to assert that we are inside the asymptotic range and that the error estimates are reliable. To this end, we examine the evolution of Richardson's fraction for the maximum range of each shell, see Figure \ref{fig:maxrange_rk1_fraction_tol53}. For each of the 6 different drag coefficients we find that evolution of Richardson's fraction supports an asymptotic error expansion with $(p,q) = (1,2)$. This result is consistent with the use of Euler's explicit method which is 1st order accurate in the time step. We observe that for each drag coefficient, $k=12$ is still inside the asymptotic range and we have no reason to doubt the magnitude of the error estimate. We conclude that the best model for the D-20 howitzer is in fact the G7 shell.
+The script will either read the raw data from a file or generate it from scratch. In any case, the script produces several figures and tables including Figure \ref{fig:maxrange_rk1_table_tol53} and Figure \ref{fig:maxrange_rk1_fraction_tol53}. These two figures represent calculations where the final time step is computed with an error that is bounded by $u h_{k}$ where $u = 2^{-53}$ is the double precision unit roundoff. Figure \ref{fig:maxrange_rk1_table_tol53} list the maximum range and the corresponding error estimate for each of the 6 shell types in our library using a time step of $h = 2^{-9} s$. In each case the error estimate suggests that the computed range is exact to number of figures shown. In particular, we see that a G7 type shell achieves a maximum range of 17.4 km and all other shells have ranges that are less than 16.9 km. It is however, a fallacy to conclude anything on the basis of this table alone. In each case, we need to assert that we are inside the asymptotic range and that the error estimates are reliable. To this end, we examine the evolution of Richardson's fraction for the maximum range of each shell, see Figure \ref{fig:maxrange_rk1_fraction_tol53}. For each of the 3 different drag coefficients shown we see that evolution of Richardson's fraction supports an asymptotic error expansion with $(p,q) = (1,2)$. This result is consistent with the use of Euler's explicit method which is 1st order accurate in the time step. We observe that for each drag coefficient, $k=12$ is still inside the asymptotic range and we have no reason to doubt the magnitude of the error estimate. We conclude that the best model for the D-20 howitzer is in fact the G7 shell.
 
 \begin{figure}
   \centering
@@ -371,6 +371,13 @@ The script will either read the raw data from a file or generate it from scratch
 
 \subsection{An unsuccessful application of the theory}
 
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth]{oplsaaltol04.pdf}
+  \caption{The evolution of the kinetic and potential energy of a system as the number of time-steps used to cover $1$ ps of real time.} \label{fig:oplsaaltol04}
+\end{figure}
+
+
 We utilized GROMACS v2021 to conduct experiments on the behavior of hen egg white lysozyme submerged in water within a cubic simulation box, following Justin Lemkul's Lysozyme in Water GROMACS Tutorial \cite{lemkul2019from}. Several steps were taken to prepare the system for production simulation: first, ions were introduced to achieve electrical neutrality. Subsequently, energy minimization was performed using the steepest descent algorithm until the maximum force reached below 1000.0 kJ/(mol·nm). Following this, the system underwent 100 ps of equilibration in an NVT ensemble to stabilize temperature, followed by another 100 ps of equilibration in an NPT ensemble to stabilize pressure. The described process was replicated using two different force fields, OPLS-AA/L and CHARMM36. We conducted production simulations of 1 ps for both force fields, using $n \in \{250, 500, 1000, 1100:100:2000, 3000:1000:16000 \}$ steps to cover this interval.
 Moreover, we used two different values of the tolerance $\tau$ for the SHAKE algorithm, namely $\tau \in \{10^{-4}, 10^{-12}\}$. 
 For each experiment, we computed the total kinetic and potential energy of the system at the end of the simulation.
@@ -378,15 +385,9 @@ The function {\tt gromacs\_figures} will generate Figure~\ref{fig:oplsaaltol04} 
 
 Firstly, the potential energy and especially the kinetic energy exhibits violent oscillations when the tolerance is large, i.e, $\tau = 10^{-4}$. The amplitude of the oscillations is reduced when $\tau = 10^{-12}$. We expect the solution of the underlying differential algebraic equation to behave nicely, but we have no such expectation for the computed approximation unless $\tau$ is very small. 
 
-\begin{figure}
-  \centering
-  \includegraphics[width=\linewidth]{oplsaaltol04.pdf}
-  \caption{The evolution of the kinetic and potential energy of a system as the number of time-steps used to cover $1$ ps of real time.} \label{fig:oplsaaltol04}
-\end{figure}
-
 Secondly, the total energy exhibits grows linearly with the number of time steps. This is not surprising as we expect the rounding error to grown with the number of operations.
 
-Thirdly, if the computed energies for ${\tt tol} = 10 ^{-12}$ follow an asymptotic error expansion, then the commonly used time step of $1$ fs ($n=1000$ in this case) is \emph{not} well inside the asymptotic range. Why is this? If we where in the asymptotic range, then the error $T - \hat{A}_h$ would very nearly obey a power law and $\hat{A}_h \approx T - \alpha h^p$ would be a good approximation for some power $p>0$. In particular, the $\hat{A}_h$  would behave in be \emph{monotone} manner and the tiny oscillations that we have recorded would not be present.
+Thirdly, if the computed energies for ${\tt tol} = 10 ^{-12}$ follow an asymptotic error expansion, then the commonly used time step of $1$ fs ($n=1000$ in this case) is \emph{not} well inside the asymptotic range. Why is this? If we where in the asymptotic range, then $\hat{A}_h \approx T - \alpha h^p$ would be a good approximation for some $\alpha \not = 0$ and a $p>0$. In particular, the $\hat{A}_h$  would behave in be \emph{monotone} manner and the tiny oscillations that we have recorded would not be present.
 
 \begin{figure}
   \centering
