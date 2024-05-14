@@ -336,14 +336,15 @@ In this section we present the results of more elaborate experiments that highli
 
 Consider the D-20 howitzer whose maximum range is known to be about 17.3 km \cite{foss1976artillery}. We have access to tables of the drag coefficient for 6 different shells types \cite{jbmballistics}. Can we determine the drag coefficient that provides the best match to the physical reality?
 
-The script {\tt maxrange\_rk1} models a shell as a point particle moving in a plane subject to Earth's standard gravity and the international standard atmospheric model. This model is suitable only for short range artillery, as it does not account for the rotation of the Earth or the orientation and spin of the projectile. Each trajectory is integrated using Euler's explicit method ({\tt 'rk1'}) and all but the final step has the same size $h$. The final step is adjusted to place the shell on the ground. The drag functions are interpolated from tables using cubic spline interpolation. The function {\tt plot\_shells} will plot the drag coefficients for the different shells as a function of the Mach number.
-
+The script {\tt maxrange\_rk1} models a shell as a point particle moving in a plane subject to Earth's standard gravity and the international standard atmospheric model.
+%This model is suitable only for short range artillery, as it does not account for the rotation of the Earth or the orientation and spin of the projectile.
+Each trajectory is integrated using Euler's explicit method ({\tt 'rk1'}) and all but the final step has the same size $h$. The final step is adjusted to place the shell on the ground. The drag functions are interpolated from tables using cubic spline interpolation. The function {\tt plot\_shells} will plot the drag coefficients for the different shells as a function of the Mach number.
 For each drag coefficient our target value $T$ is the maximum range of the shell as the elevation of the howitzer varies continuously from $0$ to $\frac{\pi}{2}$. For each drag coefficient, we compute $12$ different approximations $A_{h_k}$ of $T$ using the step size $h_k = 2^{3-k}$ seconds, where $k \in \{1,2,\dots,12\}$.
 For each drag coefficient and for each value of the time step $h$, a range function is defined which returns the range of the shell as a function of the howitzers elevation $\theta$.
 The range functions are unimodal and the maximum range is found using the golden section search algorithm.
 The initial search bracket is $[0,\pi/2$] and this bracket is systematically reduced in length until it is shorter than $\frac{\pi}{2}u$.
-The script will either read the raw data from a file or generate it from scratch. In any case, the script produces several figures and tables including Figure \ref{fig:maxrange_rk1_table_tol53} and Figure \ref{fig:maxrange_rk1_fraction_tol53}. These two figures represent calculations where the final time step is computed with an error that is bounded by $u h_{k}$ where $u = 2^{-53}$ is the double precision unit roundoff. Figure \ref{fig:maxrange_rk1_table_tol53} lists the maximum range and the corresponding error estimate for each of the 6 shell types in our library using a time step of $h = 2^{-9} s$. In each case the error estimate suggests that the computed range is exact to the number of figures shown. In particular, we see that a G7 type shell achieves a maximum range of 17.4 km and all other shells have ranges that are less than 16.9 km. However, it is a fallacy to conclude anything on the basis of this table alone. In each case, we need to assert that we are inside the asymptotic range and that the error estimates are reliable. To this end, we examine the evolution of Richardson's fraction for the maximum range of each shell, see Figure \ref{fig:maxrange_rk1_fraction_tol53}. For each of the 3 different drag coefficients shown we see that the evolution of Richardson's fraction supports an asymptotic error expansion with $(p,q) = (1,2)$. This result is consistent with the use of Euler's explicit method which is 1st order accurate in the time step\footnote{The remaining figures are similar and have been omitted to save space.}. We observe that for each drag coefficient, $k=12$ is still inside the asymptotic range and we have no reason to doubt the magnitude of the error estimate. We conclude that the best model for the D-20 howitzer is in fact the G7 shell.
-
+The script will either read the raw data from a file or generate it from scratch.
+In any case, the script produces several figures and tables including Figure \ref{fig:maxrange_rk1_table_tol53} and Figure \ref{fig:maxrange_rk1_fraction_tol53}.
 \begin{figure}
   \centering
   \begin{tabular}{c|c|c}
@@ -358,6 +359,7 @@ The script will either read the raw data from a file or generate it from scratch
   \caption{The computed maximum range for 6 shells fired from a D-20 howitzer.}
   \label{fig:maxrange_rk1_table_tol53} 
 \end{figure}
+These two figures represent calculations where the final time step is computed with an error that is bounded by $u h_{k}$ where $u = 2^{-53}$ is the double precision unit roundoff. Figure \ref{fig:maxrange_rk1_table_tol53} lists the maximum range and the corresponding error estimate for each of the 6 shell types in our library using a time step of $h = 2^{-9} s$. In each case the error estimate suggests that the computed range is exact to the number of figures shown. In particular, we see that a G7 type shell achieves a maximum range of 17.4 km and all other shells have ranges that are less than 16.9 km. However, it is a fallacy to conclude anything on the basis of this table alone. In each case, we need to assert that we are inside the asymptotic range and that the error estimates are reliable. To this end, we examine the evolution of Richardson's fraction for the maximum range of each shell, see Figure \ref{fig:maxrange_rk1_fraction_tol53}. For each of the 3 different drag coefficients shown we see that the evolution of Richardson's fraction supports an asymptotic error expansion with $(p,q) = (1,2)$. This result is consistent with the use of Euler's explicit method which is 1st order accurate in the time step\footnote{The remaining figures are similar and have been omitted to save space.}. We observe that for each drag coefficient, $k=12$ is still inside the asymptotic range and we have no reason to doubt the magnitude of the error estimate. We conclude that the best model for the D-20 howitzer is in fact the G7 shell.
 
 \begin{figure}[t!]
   \centering
@@ -367,6 +369,11 @@ The script will either read the raw data from a file or generate it from scratch
 
 \subsection{An unsuccessful application of the theory}
 
+We utilized GROMACS v2021 to conduct experiments on the behavior of hen egg white lysozyme submerged in water within a cubic simulation box, following Justin Lemkul's Lysozyme in Water GROMACS Tutorial \cite{lemkul2019from}. Several steps were taken to prepare the system for production simulation: first, ions were introduced to achieve electrical neutrality. Subsequently, energy minimization was performed using the steepest descent algorithm until the maximum force reached below 1000.0 kJ/(mol·nm). Following this, the system underwent 100 ps of equilibration in an NVT ensemble to stabilize temperature, followed by another 100 ps of equilibration in an NPT ensemble to stabilize pressure. The described process was replicated using two different force fields, OPLS-AA/L and CHARMM36. We conducted production simulations of 1 ps for both force fields, using $n \in \{250, 500, 1000, 1100:100:2000, 3000:1000:16000 \}$ steps to cover this interval.
+Moreover, we used two different values of the tolerance $\tau$ for the SHAKE algorithm, namely $\tau \in \{10^{-4}, 10^{-12}\}$. 
+For each experiment, we computed the total kinetic and potential energy of the system at the end of the simulation.
+The function {\tt gromacs\_figures} will generate Figure~\ref{fig:oplsaaltol04} and Figure~\ref{fig:oplsaaltol12} for the OPLS-AA/L force-file and similar figures for CHARMM36.
+
 \begin{figure}
   \centering
   \includegraphics[width=\linewidth]{oplsaaltol04.pdf}
@@ -374,13 +381,13 @@ The script will either read the raw data from a file or generate it from scratch
 \end{figure}
 
 
-We utilized GROMACS v2021 to conduct experiments on the behavior of hen egg white lysozyme submerged in water within a cubic simulation box, following Justin Lemkul's Lysozyme in Water GROMACS Tutorial \cite{lemkul2019from}. Several steps were taken to prepare the system for production simulation: first, ions were introduced to achieve electrical neutrality. Subsequently, energy minimization was performed using the steepest descent algorithm until the maximum force reached below 1000.0 kJ/(mol·nm). Following this, the system underwent 100 ps of equilibration in an NVT ensemble to stabilize temperature, followed by another 100 ps of equilibration in an NPT ensemble to stabilize pressure. The described process was replicated using two different force fields, OPLS-AA/L and CHARMM36. We conducted production simulations of 1 ps for both force fields, using $n \in \{250, 500, 1000, 1100:100:2000, 3000:1000:16000 \}$ steps to cover this interval.
-Moreover, we used two different values of the tolerance $\tau$ for the SHAKE algorithm, namely $\tau \in \{10^{-4}, 10^{-12}\}$. 
-For each experiment, we computed the total kinetic and potential energy of the system at the end of the simulation.
-The function {\tt gromacs\_figures} will generate Figure~\ref{fig:oplsaaltol04} and Figure~\ref{fig:oplsaaltol12} for the OPLS-AA/L force-file and similar figures for CHARMM36. These figures display the mechanical energies of the molecule at the end of the simulation as a function of the total number $n$ of time steps used to cover the interval. The figures present several features of interest.
+These figures display the mechanical energies of the molecule at the end of the simulation as a function of the total number $n$ of time steps used to cover the interval. The figures present several features of interest.
 Firstly, the potential energy and especially the kinetic energy exhibits violent oscillations when the tolerance is large, i.e., $\tau = 10^{-4}$. The amplitude of the oscillations is reduced when $\tau = 10^{-12}$. We expect the solution of the underlying differential algebraic equation to behave nicely, but we have no such expectation for the computed approximation unless $\tau$ is very small. 
 Secondly, the total energy grows linearly with the number of time steps. This is not surprising as we expect the rounding error to grow with the number of operations.
 Thirdly, if the computed energies for ${\tt tol} = 10 ^{-12}$ follow an asymptotic error expansion, then the commonly used time step of $1$ fs ($n=1000$ in this case) is \emph{not} well inside the asymptotic range. Why is this? If we were in the asymptotic range, then $\hat{A}_h \approx T - \alpha h^p$ would be a good approximation for some $\alpha \not = 0$ and $p>0$. In particular, the value of $\hat{A}_h$ should behave in a \emph{monotone} manner and the tiny oscillations that we have recorded should not be present.
+
+
+
 
 \begin{figure}
   \centering
@@ -421,16 +428,16 @@ In molecular dynamics, it is common to ignore the interaction between atoms that
 In order to explore the importance of smoothness we have simulated the motion of a set of identical ions moving in a liquid. The ions repel each other electrostatically, but they are pulled towards the origo by independent and identical springs that obey Hooke's law. The friction between each ion and the liquid is proportional to its velocity. The friction drains the energy and ensures that the ions eventually come to rest in a stable configuration. 
 Let $\bm{f}$ denote the force-field generated by an ion located at $0$ with charge $q$. Then
 \begin{equation}
-  \bm{f}(\bm{r}) = c \frac{q}{r^2} \frac{\bm{r}}{r}, \quad r = \|\bm{r}\|_2,
+  \bm{f}(\bm{r}) = c q \bm{r}/r^3, \quad r = \|\bm{r}\|_2,
 \end{equation}
 where $c > 0$ is a suitable constant. The script {\tt iontrap\_mwe1} does not modify the electrostatic force-fields and the $m=4$ ions ultimately form a regular tetrahedron with edge length $\rho > 0$.
 The scripts {\tt iontrap\_mwe2} and {\tt iontrap\_mwe4} replace $\bm{f}$ with
 \begin{equation}
-  \bm{f}_k(\bm{r}) = \bm{f}(\bm{r}) g_k(r), \quad k \in \{2, 4\}
+\bm{f}_k(\bm{r}) = \bm{f}(\bm{r}) g_k(r), \quad k \in \{2, 4\}
 \end{equation}
 where $g_k$ is a switching function that assumes values in $[0,1]$. The function $g_2$ has a jump discontinuity and satisfies $g_2(r) = 1$ for $r < 0.5 \rho$ and $g_2(r) = 0$ for $r \ge 0.5 \rho$. The function $g_4$ is of class $C^\infty$ and satisfies $g_4(r) = 1$ for $r < 0.5 \rho$ and $g_4(r) = 0$ for $r \ge 0.95 \rho$. It is clear that changing the force-fields impacts the motion, but can we estimate the discretization error and quantify this effect? Figure \ref{fig:iontrap_mwe1}, \ref{fig:iontrap_mwe2}, \ref{fig:iontrap_mwe4} show the evolution of Richardson's fraction for the kinetic energy at the end of each simulation.
 
-When the force-fields are not perturbed, see Figure~\ref{fig:iontrap_mwe1}, the experiments support the existence of an asymptotic error expansion and we can clearly identify an asymptotic range for each of the 4 Runge-Kutta methods used to integrate Newton's equations of motion.
+When the force-fields are not perturbed, see Figure~\ref{fig:iontrap_mwe1}, or when the perturbation is smooth, see Figure~\ref{fig:iontrap_mwe4}, then the experiments support the existence of an asymptotic error expansion and we can clearly identify an asymptotic range for each of the 4 Runge-Kutta methods used to integrate Newton's equations of motion.x1
 \begin{figure}[h!]
   \centering
   \includegraphics[width=\linewidth]{iontrap_mwe2.pdf}
@@ -444,7 +451,7 @@ When the force-fields are truncated and discontinuities are introduced into the 
   \caption{The evolution of $F_h$ for the total kinetic energy of a system of ions using integrators of order $p$. The fields are zero outside a small sphere, but smooth.}
   \label{fig:iontrap_mwe4}
 \end{figure}
-When the force-fields vanish outside a small ball but are smooth, see Figure~\ref{fig:iontrap_mwe4}, we retain the ability to judge when Richardson's error estimates are reliable and we can quantify the effect of changing the force-field.
+
 
 \section{Conclusion}
 

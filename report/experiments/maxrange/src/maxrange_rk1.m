@@ -113,7 +113,7 @@ end
 data=zeros(kmax,4,numshell,numtol);
 
 % Height of a single row of figures in pixels
-height=290;
+height=280;
 
 if (ppam2024==false)
 

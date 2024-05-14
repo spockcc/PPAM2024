@@ -83,7 +83,7 @@ axb=figb.CurrentAxes; axb.FontSize=20; % axb.GridLineWidth=2;
 pltb1.LineWidth=4; pltb2.LineWidth=4;
 
 % Set the position and size
-figb.Position=[900 800 560 400];
+figb.Position=[900 800 560 320];
 
 % Save the figure
 fname='rint_mwe1b.eps';
