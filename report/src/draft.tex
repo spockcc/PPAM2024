@@ -43,8 +43,8 @@
 %
 \institute{
   Department of Computing Science, Ume{\aa} University, 90187 Ume{\aa}, Sweden \email{spock@cs.umu.se} \\
-  \and Barcelona Supercomputing Center, Barcelona, Spain, \\
-  \email{lorien.lopez@bsc.es} \\
+  \and Departamento de Inform\'atica e Ingenier\'ia de Sistemas / Arag\'on Institute for Engineering Research (I3A), Universidad de Zaragoza, Zaragoza, Spain \\
+  \email{lorien.lopez@unizar.es} \\
  %  \and Independent scholar \\
  %  \email{risueno@unizar.es, garcia.risueno@gmail.com}
 }
@@ -379,11 +379,11 @@ Moreover, we used two different values of the tolerance $\tau$ for the SHAKE alg
 For each experiment, we computed the total kinetic and potential energy of the system at the end of the simulation.
 The function {\tt gromacs\_figures} will generate Figure~\ref{fig:oplsaaltol04} and Figure~\ref{fig:oplsaaltol12} for the OPLS-AA/L force-file and similar figures for CHARMM36. These figures display the mechanical energies of the molecule at the end of the simulation as a function of the total number $n$ of time steps used to cover the interval. The figures present several features of interest.
 
-Firstly, the potential energy and especially the kinetic energy exhibits violent oscillations when the tolerance is large, i.e, $\tau = 10^{-4}$. The amplitude of the oscillations is reduced when $\tau = 10^{-12}$. We expect the solution of the underlying differential algebraic equation to behave nicely, but we have no such expectation for the computed approximation unless $\tau$ is very small. 
+Firstly, the potential energy and especially the kinetic energy exhibits violent oscillations when the tolerance is large, i.e., $\tau = 10^{-4}$. The amplitude of the oscillations is reduced when $\tau = 10^{-12}$. We expect the solution of the underlying differential algebraic equation to behave nicely, but we have no such expectation for the computed approximation unless $\tau$ is very small. 
 
 Secondly, the total energy grows linearly with the number of time steps. This is not surprising as we expect the rounding error to grow with the number of operations.
 
-Thirdly, if the computed energies for ${\tt tol} = 10 ^{-12}$ follow an asymptotic error expansion, then the commonly used time step of $1$ fs ($n=1000$ in this case) is \emph{not} well inside the asymptotic range. Why is this? If we where in the asymptotic range, then $\hat{A}_h \approx T - \alpha h^p$ would be a good approximation for some $\alpha \not = 0$ and $p>0$. In particular, the value of $\hat{A}_h$ should behave in a \emph{monotone} manner and the tiny oscillations that we have recorded should not be present.
+Thirdly, if the computed energies for ${\tt tol} = 10 ^{-12}$ follow an asymptotic error expansion, then the commonly used time step of $1$ fs ($n=1000$ in this case) is \emph{not} well inside the asymptotic range. Why is this? If we were in the asymptotic range, then $\hat{A}_h \approx T - \alpha h^p$ would be a good approximation for some $\alpha \not = 0$ and $p>0$. In particular, the value of $\hat{A}_h$ should behave in a \emph{monotone} manner and the tiny oscillations that we have recorded should not be present.
 
 \begin{figure}
   \centering
@@ -433,7 +433,7 @@ The scripts {\tt iontrap\_mwe2} and {\tt iontrap\_mwe4} replace $\bm{f}$ with
 \end{equation}
 where $g_k$ is a switching function that assumes values in $[0,1]$. The function $g_2$ has a jump discontinuity and satisfies $g_2(r) = 1$ for $r < 0.5 \rho$ and $g_2(r) = 0$ for $r \ge 0.5 \rho$. The function $g_4$ is of class $C^\infty$ and satisfies $g_4(r) = 1$ for $r < 0.5 \rho$ and $g_4(r) = 0$ for $r \ge 0.95 \rho$. It is clear that changing the force-fields impacts the motion, but can we estimate the discretization error and quantify this effect? Figure \ref{fig:iontrap_mwe1}, \ref{fig:iontrap_mwe2}, \ref{fig:iontrap_mwe4} show the evolution of Richardson's fraction for the kinetic energy at the end of each simulation.
 
-When the force-fields are not perturbed, see Figure~\ref{fig:iontrap_mwe1}, the experiments supports the existence of an asymptotic error expansion and we can clearly identify an asymptotic range for each of the 4 Runge-Kutta methods used to integrate Newton's equations of motion.
+When the force-fields are not perturbed, see Figure~\ref{fig:iontrap_mwe1}, the experiments support the existence of an asymptotic error expansion and we can clearly identify an asymptotic range for each of the 4 Runge-Kutta methods used to integrate Newton's equations of motion.
 \begin{figure}[h!]
   \centering
   \includegraphics[width=\linewidth]{iontrap_mwe2.pdf}
@@ -457,8 +457,7 @@ A central task in the field of computational science is to fit a system of DAEs 
 
 The authors would like to thank Jesús Alastruey-Benedé, Pablo Ibáñez and Pablo García-Risueño for stimulating discussions on the subject matter.
 The first author is supported by eSSENCE, a collaborative e-Science programme funded by the Swedish Research Council within the framework of the strategic research areas designated by the Swedish Government.
-% @Lorien: update these lines with current information.
-This work has been partially supported by the Spanish Ministry of Science and Innovation (contract PID2019-107255GB-C21/AEI/10.13039/501100011033), by the Generalitat de Catalunya (contract 2017-SGR-1328), and by Lenovo-BSC Contract-Framework Contract (2020).
+This work has been partially supported by the Spanish Ministry of Science and Innovation MCIN/AEI/10.13039/501100011033 (grant PID2022-136454NB-C22), and by Government of Aragon (T58_23R research group).
 
 %
 % ---- Bibliography ----
