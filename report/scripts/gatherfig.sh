@@ -1,7 +1,6 @@
-find experiments -name \*.png -exec cp {} fig \;
 find experiments -name \*.eps -exec cp {} fig \;
 
-# Crop white space from MATLAB eps files
+# Crop white space from .eps files and generate .pdf files
 cd fig
 ps2pdf -DEPSCrop rint_mwe1a.eps rint_mwe1a.pdf
 ps2pdf -DEPSCrop rint_mwe1b.eps rint_mwe1b.pdf
