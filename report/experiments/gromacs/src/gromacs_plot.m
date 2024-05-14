@@ -2,7 +2,7 @@ function [fig, ax]=gromacs_plot(field, tol, n, ekin, epot)
 
 
 
-fig=figure(); fig.Position=[100 800 1800 600];
+fig=figure(); fig.Position=[100 800 1800 560];
 
 subplot(1,2,1); 
 plt1=plot(n,ekin); grid; 
