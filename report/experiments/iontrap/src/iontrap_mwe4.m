@@ -60,10 +60,10 @@ if ~isfile(dname)
     scale=1;
 
     % Set cutoff function
-    rho=0.1462; rho1=0.5*rho; rho2=0.95*rho; cut=@(x)cut2(rho1, rho2, x);
+    rho=0.1462; rho1=0.5*rho; rho2=0.95*rho; g4=@(x)cut2(rho1, rho2, x);
     
     % Set the forcefield: coulomb force + springs + dampning
-    f=@(q,p)modified_coulomb_force(dim,n,charge,q,scale,cut)-spring*q-damp*p;
+    f=@(q,p)modified_coulomb_force(dim,n,charge,q,scale,g4)-spring*q-damp*p;
 
     % Set the potential
     U=@(q)coulomb_potential(dim,n,charge,q,scale)-0.5*spring*norm(q)^2;
