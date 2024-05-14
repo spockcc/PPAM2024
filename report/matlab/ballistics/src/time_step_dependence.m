@@ -45,3 +45,6 @@ leg.FontSize=18;
 % Title
 tit=title('The computed trajectory depends on the time step');
 tit.FontSize=18
+
+% Position
+fig.Position=[600 800 800 450];
