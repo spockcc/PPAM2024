@@ -33,5 +33,5 @@ plt1.LineWidth=lw;
 plt2.LineWidth=lw;
 
 % Set a common title
-tit=sgtitle(['Forcefield = ' field '     constraint tolerance = ' num2str(tol,'%.2e')]);
+tit=sgtitle(['Force field = ' field '     constraint tolerance = ' num2str(tol,'%.2e')]);
 tit.FontSize=32;

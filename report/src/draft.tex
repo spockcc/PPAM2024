@@ -58,14 +58,14 @@
 %
 %
 %
-\section{Motivation} Consider the problem simulating the motion of a system of atoms moving in a force-field $\bm{f}$ subject to a set of constraints $\bm{g}$. In this case, Newton's 2nd law takes the form of the following system of differential algebraic equations
+\section{Motivation} Consider the problem simulating the motion of a system of atoms moving in a force field subject to a set of constraints. In this case, Newton's 2nd law takes the form of the following system of differential algebraic equations
 \begin{align}
   \bm{q}'(t) &= \bm{v}(t), \\
   \bm{M}\bm{v}'(t) &= \bm{f}(\bm{q}(t)) - \bm{G}(\bm{q}(t))^T\bm{\lambda}(t), \\
   \bm{g}(\bm{q}(t)) &= \bm{0}. 
 \end{align}
 The vector $\bm{q}$ represents the position of the atoms.
-The vector $\bm{v}$ represents the velocities of the atoms. The function $\bm{f}$ represents the force-field acting on the atoms.
+The vector $\bm{v}$ represents the velocities of the atoms. The function $\bm{f}$ represents the force acting on the atoms.
 The nonsingular diagonal matrix $\bm{M}$ lists the masses of the atoms.
 The function $\bm{G}$ is the Jacobian of the constraint function $\bm{g}$ and $\bm{\lambda}$ is a vector of Lagrange multipliers.
 In the field of molecular dynamics, the standard algorithm for this problem is the SHAKE algorithm \cite{shake1977}.
@@ -76,7 +76,7 @@ It uses a pair of staggered grids with uniform step size $h$ and takes the form
   \bm{g}(\bm{q}_{n+1}) &= \bm{0}. \label{equ:constraint}
 \end{align}
 The constraint equation \eqref{equ:constraint} is usually a nonlinear equation with respect to the Lagrange multipliers $\bm{\lambda}_n$. 
-Now let $T \in \mathbb{R}$ denote any target value that can be computed in terms of the trajectory $t \rightarrow (q(t), v(t))$ and let $A_h$ denote the corresponding value obtained from the output of the SHAKE algorithm. It is clear that $T$ and $A_h$ are both functions of the force-field $\bm{f}$ and the question of adjusting $\bm{f}$ to match the outcome of a physical experiment naturally suggests itself. Let therefore $T_0 \in \mathbb{R}$ be given and consider the problem of solving the equation
+Now let $T \in \mathbb{R}$ denote any target value that can be computed in terms of the trajectory $t \rightarrow (q(t), v(t))$ and let $A_h$ denote the corresponding value obtained from the output of the SHAKE algorithm. It is clear that $T$ and $A_h$ are both functions of the force field $\bm{f}$ and the question of adjusting $\bm{f}$ to match the outcome of a physical experiment naturally suggests itself. Let therefore $T_0 \in \mathbb{R}$ be given and consider the problem of solving the equation
 \begin{equation}
   T_0 = T(\bm{f})
 \end{equation}
@@ -374,7 +374,7 @@ These two figures represent calculations where the final time step is computed w
 We utilized GROMACS v2021 to conduct experiments on the behavior of hen egg white lysozyme submerged in water within a cubic simulation box, following Justin Lemkul's Lysozyme in Water GROMACS Tutorial \cite{lemkul2019from}. Several steps were taken to prepare the system for production simulation: first, ions were introduced to achieve electrical neutrality. Subsequently, energy minimization was performed using the steepest descent algorithm until the maximum force reached below 1000.0 kJ/(mol·nm). Following this, the system underwent 100 ps of equilibration in an NVT ensemble to stabilize temperature, followed by another 100 ps of equilibration in an NPT ensemble to stabilize pressure. The described process was replicated using two different force fields, OPLS-AA/L and CHARMM36. We conducted production simulations of 1 ps for both force fields, using $n \in \{250, 500, 1000, 1100:100:2000, 3000:1000:16000 \}$ steps to cover this interval.
 Moreover, we used two different values of the tolerance $\tau$ for the SHAKE algorithm, namely $\tau \in \{10^{-4}, 10^{-12}\}$. 
 For each experiment, we computed the total kinetic and potential energy of the system at the end of the simulation.
-The function {\tt gromacs\_figures} will generate Figure~\ref{fig:oplsaaltol04} and Figure~\ref{fig:oplsaaltol12} for the OPLS-AA/L force-file and similar figures for CHARMM36.
+The function {\tt gromacs\_figures} will generate Figure~\ref{fig:oplsaaltol04} and Figure~\ref{fig:oplsaaltol12} for the OPLS-AA/L force field and similar figures for CHARMM36.
 
 \begin{figure}
   \centering
@@ -418,7 +418,7 @@ When the tolerance is large, see Figure~\ref{fig:maxrange_rk2_tol11}, there is n
 
 \subsection{The need for sufficient smoothness}
 
-In molecular dynamics, it is common to ignore the interaction between atoms that are far away. This can be done by setting force-fields to zero outside of a sufficiently large ball. There is more than one way to achieve this and the documentation for GROMACS 2021 discusses its use of force-fields that are not of class $C^{\infty}$.
+In molecular dynamics, it is common to ignore the interaction between atoms that are far away. This can be done by setting force fields to zero outside of a sufficiently large ball. There is more than one way to achieve this and the documentation for GROMACS 2021 discusses its use of force fields that are not of class $C^{\infty}$.
 
 \begin{figure}[h!]
   \centering
@@ -432,21 +432,21 @@ Let $\bm{f}$ denote the force-field generated by an ion located at $0$ with char
 \begin{equation}
   \bm{f}(\bm{r}) = c q \bm{r}/r^3, \quad r = \|\bm{r}\|_2,
 \end{equation}
-where $c > 0$ is a suitable constant. The script {\tt iontrap\_mwe1} does not modify the electrostatic force-fields and the $m=4$ ions ultimately form a regular tetrahedron with edge length $\rho > 0$.
+where $c > 0$ is a suitable constant. The script {\tt iontrap\_mwe1} does not modify the electrostatic force fields and the $m=4$ ions ultimately form a regular tetrahedron with edge length $\rho > 0$.
 The scripts {\tt iontrap\_mwe2} and {\tt iontrap\_mwe4} replace $\bm{f}$ with
 \begin{equation}
 \bm{f}_k(\bm{r}) = \bm{f}(\bm{r}) g_k(r), \quad k \in \{2, 4\}
 \end{equation}
-where $g_k$ is a switching function that assumes values in $[0,1]$. The function $g_2$ has a jump discontinuity and satisfies $g_2(r) = 1$ for $r < 0.5 \rho$ and $g_2(r) = 0$ for $r \ge 0.5 \rho$. The function $g_4$ is of class $C^\infty$ and satisfies $g_4(r) = 1$ for $r < 0.5 \rho$ and $g_4(r) = 0$ for $r \ge 0.95 \rho$. It is clear that changing the force-fields impacts the motion, but can we estimate the discretization error and quantify this effect? Figure \ref{fig:iontrap_mwe1}, \ref{fig:iontrap_mwe2}, \ref{fig:iontrap_mwe4} show the evolution of Richardson's fraction for the kinetic energy at the end of each simulation.
+where $g_k$ is a switching function that assumes values in $[0,1]$. The function $g_2$ has a jump discontinuity and satisfies $g_2(r) = 1$ for $r < 0.5 \rho$ and $g_2(r) = 0$ for $r \ge 0.5 \rho$. The function $g_4$ is of class $C^\infty$ and satisfies $g_4(r) = 1$ for $r < 0.5 \rho$ and $g_4(r) = 0$ for $r \ge 0.95 \rho$. It is clear that changing the force fields impacts the motion, but can we estimate the discretization error and quantify this effect? Figure \ref{fig:iontrap_mwe1}, \ref{fig:iontrap_mwe2}, \ref{fig:iontrap_mwe4} show the evolution of Richardson's fraction for the kinetic energy at the end of each simulation.
 
-When the force-fields are not perturbed, see Figure~\ref{fig:iontrap_mwe1}, or when the perturbation is smooth, see Figure~\ref{fig:iontrap_mwe4}, then the experiments support the existence of an asymptotic error expansion and we can clearly identify an asymptotic range for each of the 4 Runge-Kutta methods used to integrate Newton's equations of motion.x1
+When the force fields are not perturbed, see Figure~\ref{fig:iontrap_mwe1}, or when the perturbation is smooth, see Figure~\ref{fig:iontrap_mwe4}, then the experiments support the existence of an asymptotic error expansion and we can clearly identify an asymptotic range for each of the 4 Runge-Kutta methods used to integrate Newton's equations of motion.x1
 \begin{figure}[h!]
   \centering
   \includegraphics[width=\linewidth]{iontrap_mwe2.pdf}
   \caption{The evolution of $F_h$ for the total kinetic energy of a system of ions using integrators of order $p$. The fields are zero outside a small sphere and discontinuous.}
   \label{fig:iontrap_mwe2}
 \end{figure}
-When the force-fields are truncated and discontinuities are introduced into the simulation, see Figure~\ref{fig:iontrap_mwe2}, there is no evidence to support the existence of an asymptotic error expansion and there is no reason to suspect that Richardson's error estimate is accurate.
+When the force fields are truncated and discontinuities are introduced into the simulation, see Figure~\ref{fig:iontrap_mwe2}, there is no evidence to support the existence of an asymptotic error expansion and there is no reason to suspect that Richardson's error estimate is accurate.
 \begin{figure}
   \centering
   \includegraphics[width=\linewidth]{iontrap_mwe4.pdf}
