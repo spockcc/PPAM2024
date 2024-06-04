@@ -68,23 +68,23 @@ The vector $\bm{q}$ represents the position of the atoms.
 The vector $\bm{v}$ represents the velocities of the atoms. The function $\bm{f}$ represents the force-field acting on the atoms.
 The nonsingular diagonal matrix $\bm{M}$ lists the masses of the atoms.
 The function $\bm{G}$ is the Jacobian of the constraint function $\bm{g}$ and $\bm{\lambda}$ is a vector of Lagrange multipliers.
-In the field of molecular dynamics, the standard algorithm for this problem is the SHAKE algorithm \cite{shake1977}
+In the field of molecular dynamics, the standard algorithm for this problem is the SHAKE algorithm \cite{shake1977}.
 It uses a pair of staggered grids with uniform step size $h$ and takes the form
 \begin{align}
   \bm{v}_{n+1/2} &= \bm{v}_{n-1/2} + \bm{h} \bm{M}^{-1} \left( \bm{f}(\bm{q}_n) - \bm{G}(\bm{q}_n)^T \bm{\lambda}_n \right), \\
   \bm{q}_{n+1} &= \bm{q}_n + h \bm{v}_{n + 1/2}, \\
   \bm{g}(\bm{q}_{n+1}) &= \bm{0}. \label{equ:constraint}
 \end{align}
-The constraint equation \eqref{equ:constraint} is usually a nonlinear equation with respect to the Lagrange multiplier $\bm{\lambda}_n$. 
+The constraint equation \eqref{equ:constraint} is usually a nonlinear equation with respect to the Lagrange multipliers $\bm{\lambda}_n$. 
 Now let $T \in \mathbb{R}$ denote any target value that can be computed in terms of the trajectory $t \rightarrow (q(t), v(t))$ and let $A_h$ denote the corresponding value obtained from the output of the SHAKE algorithm. It is clear that $T$ and $A_h$ are both functions of the force-field $\bm{f}$ and the question of adjusting $\bm{f}$ to match the outcome of a physical experiment naturally suggests itself. Let therefore $T_0 \in \mathbb{R}$ be given and consider the problem of solving the equation
 \begin{equation}
   T_0 = T(\bm{f})
 \end{equation}
-with respect to $\bm{f}$. The fundamental problem is that we cannot compute the exact values of $T(\bm{f})$ and $A_h(\bm{f})$. We must contend with the fact that we cannot expect to solve the constraint equations exactly nor can we avoid rounding errors in general. Let $\hat{A}_h(\bm{f}, \tau, u)$ denote the value returned by our computer when solving the constraint equations with a relative error bounded by $\tau$ and using floating point arithmetic with unit roundoff $u$. Suppose that $T_0 - A_h(\bm{f}, \tau, u)$ is small. Can we conclude that $T_0 - T(\bm{f})$ is small? The triangle inequality delivers the following bound:
+with respect to $\bm{f}$. The fundamental problem is that we cannot compute the exact values of $T(\bm{f})$ and $A_h(\bm{f})$. We must contend with the fact that we cannot expect to solve the constraint equations exactly nor can we avoid rounding errors in general. Let $\hat{A}_h(\bm{f}, \tau, u)$ denote the value returned by our computer when solving the constraint equations with a relative error bounded by $\tau$ and using floating point arithmetic with unit roundoff $u$. Suppose that $T_0 - \hat{A}_h(\bm{f}, \tau, u)$ is small. Can we conclude that $T_0 - T(\bm{f})$ is small? The triangle inequality delivers the following bound:
 \begin{equation}
-  |T_0 - T(\bm{f}) | \leq  |T_0 - A_h(\bm{f},\tau,u)| + |A_h(\bm{f}) - A_h(\bm{f},\tau,u)| + |T(\bm{f}) - A_h(\bm{f})|.
+  |T_0 - T(\bm{f}) | \leq  |T_0 - \hat{A}_h(\bm{f},\tau,u)| + |A_h(\bm{f}) - \hat{A}_h(\bm{f},\tau,u)| + |T(\bm{f}) - A_h(\bm{f})|.
 \end{equation}
-We conclude that $T_0 - T(\bm{f})$ is small, if the \emph{computational error} $A_h(\bm{f}) - A_h(\bm{f}, \tau, u)$ and the \emph{discretization error} $T(\bm{f}) - A_h(\bm{f})$ are both small. If we cannot control these errors, then we cannot say with certainty that our model delivers a good approximation of the physical reality.
+We conclude that $T_0 - T(\bm{f})$ is small, if the \emph{computational error} $A_h(\bm{f}) - \hat{A}_h(\bm{f}, \tau, u)$ and the \emph{discretization error} $T(\bm{f}) - A_h(\bm{f})$ are both small. If we cannot control these errors, then we cannot say with certainty that our model delivers a good approximation of the physical reality.
 
 Richardson extrapolation is a classical technique that is widely used in computational science and engineering applications \cite{roache1998}. It can be used to estimate the size of discretization errors or improve the accuracy of an existing solution \cite{zahari2018} and it has applications in event location \cite{mannshardt1978one} as well. As we shall demonstrate, Richardson extrapolation can often be used to determine when computational errors are insignificant.
 
@@ -92,11 +92,11 @@ In this paper we derive and illustrate the use of Richardson extrapolation using
 GROMACS is a state-of-the-art library for molecular dynamics that is widely used in academia \cite{gromacs2005}.
 We demonstrate that the output of GROMACS is not always amenable to Richardson extrapolation. 
 We identify two conditions that are not always satisfied by GROMACS and we demonstrate that each condition is necessary for the successful application of Richardson extrapolation.
-Our data and software is freely available from our GitHub \cite{spockcc2024ppam} repository along with every script and function needed to replicate every number, table and figure from scratch. The names of our MATLAB functions are written with a typewriter font, e.g., \texttt{plot\_shells}.
+Our data and software are freely available from our GitHub \cite{spockcc2024ppam} repository along with every script and function needed to replicate every number, table and figure from scratch. The names of our MATLAB functions are written with a typewriter font, e.g., \texttt{plot\_shells}.
 
 \section{Theory}
 
-Consider the problem of approximating a target value $T$ using a method $A = A_h$ that depends on a single real parameter $h$. We shall assume there exists nonzero real constants $\alpha$ and $\beta$ and real exponents
+Consider the problem of approximating a target value $T$ using a method $A = A_h$ that depends on a single real parameter $h$. We shall assume that there exists nonzero real constants $\alpha$ and $\beta$ and real exponents
 \begin{equation}
   0 < p < q < r
 \end{equation}
@@ -238,7 +238,7 @@ We observe that $k \rightarrow \log_2|\hat{F}_{h_k} - 4|$ is essentially a linea
 This is the so-called asymptotic range, where the computed value $\hat{A}_h$  behaves in a manner that is indistinguishable from the exact value $A_h$.
 We conclude that the experiment supports the existence of an asymptotic error expansion with $(p,q) = (p,p+m) = (2,4)$.
 Since the target value $T$ is known, we can treat Richardson's error estimate as an approximation of the error $T - \hat{A}_h$ and compute the corresponding relative error, see Figure \ref{fig:rint_mwe1b}.
-We observe that the computed value of Richardson's error estimate is a good approximation of the error $T - \hat{A}_{h_h}$. In fact, the corresponding relative error decreases when $k$ increases as long as we also remain inside the asymptotic region.
+We observe that the computed value of Richardson's error estimate is a good approximation of the error $T - \hat{A}_{h_k}$. In fact, the corresponding relative error decreases when $k$ increases as long as we also remain inside the asymptotic region.
 
 \begin{figure}[h]
 \begin{subfigure}[h]{0.49\linewidth}
@@ -258,7 +258,7 @@ We observe that the computed value of Richardson's error estimate is a good appr
 Let $f : [0,1] \rightarrow \mathbb{R}$ be given by $f(x) = \sqrt{x}$ and let $T$ be given by equation \eqref{equ:integral}.
 Then $T = \frac{2}{3}$. Since $f$ is not differentiable at $x=0$ we have no guarantee that there exists an asymptotic error expansion of the form given by equation \eqref{equ:trapezoidal-rule:aex}.
 The script {\tt rint\_mwe2} computes $A_h$ using $h_k = 2^{-k}$ for $k \in \{0,1,\dots,25\}$ and generates Figures \ref{fig:rint_mwe2a} and \ref{fig:rint_mwe2b}.
-From the raw data it is clear that $p = 2$ cannot be true, but it is plausible that $p \approx \frac{3}{2}$.
+The raw data shows that $p = 2$ cannot be true, but it is plausible that $p \approx \frac{3}{2}$.
 Figure \ref{fig:rint_mwe1a} illustrates the evolution of the \emph{computed} values of Richardson's fraction.
 We observe that $k \rightarrow \log_2|\hat{F}_{h_k} - 2^{3/2}|$ is essentially a linear function of $k$ with slope $-\frac{1}{2}$ for $k \in \{2,3,\dots,18\}$.
 This is the asymptotic range where the computed numbers $\hat{A}_h$ behave in a manner that is similar to the exact value $A_h$. 
@@ -332,7 +332,7 @@ In this section we present the results of more elaborate experiments that highli
 
 % In this section we shall demonstrate how the theory can be applied to analyze a nontrivial problem.
 
-\paragraph{Example: Identify the shells fired by a howitzer}
+\paragraph{Example: Identify the shells fired by a howitzer.}
 
 Consider the D-20 howitzer whose maximum range is known to be about 17.3 km \cite{foss1976artillery}. We have access to tables of the drag coefficient for 6 different shells types \cite{jbmballistics}. Can we determine the drag coefficient that provides the best match to the physical reality?
 
@@ -345,21 +345,23 @@ The range functions are unimodal and the maximum range is found using the golden
 The initial search bracket is $[0,\pi/2$] and this bracket is systematically reduced in length until it is shorter than $\frac{\pi}{2}u$.
 The script will either read the raw data from a file or generate it from scratch.
 In any case, the script produces several figures and tables including Figure \ref{fig:maxrange_rk1_table_tol53} and Figure \ref{fig:maxrange_rk1_fraction_tol53}.
-\begin{figure}
-  \centering
-  \begin{tabular}{c|c|c}
-    Shell type & Maximum range (m) & Error estimate (m) \\ \hline
-    G1      &     12832    &            0.4 \\
-    G2      &     16857    &            0.1 \\
-    G5      &     15918    &            0.2 \\
-    G6      &     15556    &            0.2 \\
-    G7      &     17461    &            0.1 \\
-    G8      &     15914    &            0.1 \\
-  \end{tabular}
-  \caption{The computed maximum range for 6 shells fired from a D-20 howitzer.}
-  \label{fig:maxrange_rk1_table_tol53} 
-\end{figure}
-These two figures represent calculations where the final time step is computed with an error that is bounded by $u h_{k}$ where $u = 2^{-53}$ is the double precision unit roundoff. Figure \ref{fig:maxrange_rk1_table_tol53} lists the maximum range and the corresponding error estimate for each of the 6 shell types in our library using a time step of $h = 2^{-9} s$. In each case the error estimate suggests that the computed range is exact to the number of figures shown. In particular, we see that a G7 type shell achieves a maximum range of 17.4 km and all other shells have ranges that are less than 16.9 km. However, it is a fallacy to conclude anything on the basis of this table alone. In each case, we need to assert that we are inside the asymptotic range and that the error estimates are reliable. To this end, we examine the evolution of Richardson's fraction for the maximum range of each shell, see Figure \ref{fig:maxrange_rk1_fraction_tol53}. For each of the 3 different drag coefficients shown we see that the evolution of Richardson's fraction supports an asymptotic error expansion with $(p,q) = (1,2)$. This result is consistent with the use of Euler's explicit method which is 1st order accurate in the time step\footnote{The remaining figures are similar and have been omitted to save space.}. We observe that for each drag coefficient, $k=12$ is still inside the asymptotic range and we have no reason to doubt the magnitude of the error estimate. We conclude that the best model for the D-20 howitzer is in fact the G7 shell.
+\begin{table}
+ \caption{The computed maximum range for 6 shells fired from a D-20 howitzer.}
+ \label{fig:maxrange_rk1_table_tol53} 
+ \centering
+ \vspace{.25cm}
+ \begin{tabular}{c|c|c}
+   Shell type & Maximum range (m) & Error estimate (m) \\ \hline
+   G1      &     12832    &            0.4 \\
+   G2      &     16857    &            0.1 \\
+   G5      &     15918    &            0.2 \\
+   G6      &     15556    &            0.2 \\
+   G7      &     17461    &            0.1 \\
+   G8      &     15914    &            0.1 \\
+   \hline
+ \end{tabular}
+\end{table}
+These two figures represent calculations where the final time step is computed with an error that is bounded by $u h_{k}$ where $u = 2^{-53}$ is the double precision unit roundoff. Figure \ref{fig:maxrange_rk1_table_tol53} lists the maximum range and the corresponding error estimate for each of the 6 shell types in our library using a time step of $h = 2^{-9} s$. In each case the error estimate suggests that the computed range is exact to the number of figures shown. In particular, we see that a G7 type shell achieves a maximum range of 17.5 km and all other shells have ranges that are less than 16.9 km. However, it is a fallacy to conclude anything on the basis of this table alone. In each case, we need to assert that we are inside the asymptotic range and that the error estimates are reliable. To this end, we examine the evolution of Richardson's fraction for the maximum range of each shell, see Figure \ref{fig:maxrange_rk1_fraction_tol53}. For each of the 3 different drag coefficients shown we see that the evolution of Richardson's fraction supports an asymptotic error expansion with $(p,q) = (1,2)$. This result is consistent with the use of Euler's explicit method which is 1st order accurate in the time step\footnote{The remaining figures are similar and have been omitted to save space.}. We observe that for each drag coefficient, $k=12$ is still inside the asymptotic range and we have no reason to doubt the magnitude of the error estimate. We conclude that the best model for the D-20 howitzer is in fact the G7 shell.
 
 \begin{figure}[t!]
   \centering
@@ -381,7 +383,7 @@ The function {\tt gromacs\_figures} will generate Figure~\ref{fig:oplsaaltol04} 
 \end{figure}
 
 
-These figures display the mechanical energies of the molecule at the end of the simulation as a function of the total number $n$ of time steps used to cover the interval. The figures present several features of interest.
+These figures display the total potential and kinetic energy at the end of the simulation as a function of the total number $n$ of time steps used to cover the interval. The figures present several features of interest.
 Firstly, the potential energy and especially the kinetic energy exhibits violent oscillations when the tolerance is large, i.e., $\tau = 10^{-4}$. The amplitude of the oscillations is reduced when $\tau = 10^{-12}$. We expect the solution of the underlying differential algebraic equation to behave nicely, but we have no such expectation for the computed approximation unless $\tau$ is very small. 
 Secondly, the total energy grows linearly with the number of time steps. This is not surprising as we expect the rounding error to grow with the number of operations.
 Thirdly, if the computed energies for ${\tt tol} = 10 ^{-12}$ follow an asymptotic error expansion, then the commonly used time step of $1$ fs ($n=1000$ in this case) is \emph{not} well inside the asymptotic range. Why is this? If we were in the asymptotic range, then $\hat{A}_h \approx T - \alpha h^p$ would be a good approximation for some $\alpha \not = 0$ and $p>0$. In particular, the value of $\hat{A}_h$ should behave in a \emph{monotone} manner and the tiny oscillations that we have recorded should not be present.
@@ -425,7 +427,7 @@ In molecular dynamics, it is common to ignore the interaction between atoms that
   \label{fig:iontrap_mwe1}
 \end{figure}
 
-In order to explore the importance of smoothness we have simulated the motion of a set of identical ions moving in a liquid. The ions repel each other electrostatically, but they are pulled towards the origo by independent and identical springs that obey Hooke's law. The friction between each ion and the liquid is proportional to its velocity. The friction drains the energy and ensures that the ions eventually come to rest in a stable configuration. 
+In order to explore the importance of smoothness we have simulated the motion of a set of identical ions moving in a liquid. The ions repel each other electrostatically, but they are pulled towards the origin by independent and identical springs that obey Hooke's law. The friction between each ion and the liquid is proportional to its velocity. The friction drains the energy and ensures that the ions eventually come to rest in a stable configuration. 
 Let $\bm{f}$ denote the force-field generated by an ion located at $0$ with charge $q$. Then
 \begin{equation}
   \bm{f}(\bm{r}) = c q \bm{r}/r^3, \quad r = \|\bm{r}\|_2,

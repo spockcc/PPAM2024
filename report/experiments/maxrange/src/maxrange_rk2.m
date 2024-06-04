@@ -13,6 +13,15 @@ clear;
 % Logical switch
 ppam2024=true;
 
+% Height of a single row of figures in pixels
+height=300;
+
+% Line width
+lw=2;
+
+% Fontsize
+fs=16;
+
 % Define the howitzer, atmosphere, gravity
 d20;
 
@@ -112,9 +121,6 @@ end
 % Allocate space for the data
 data=zeros(kmax,4,numshell,numtol);
 
-% Height of a single row of figures in pixels
-height=300;
-
 if (ppam2024==false)
     
     % Process all data and generate the plots
@@ -135,13 +141,13 @@ if (ppam2024==false)
             sf.Title=title(tit{j});
             
             % Set the fontsize for the axes
-            ax=fig.CurrentAxes; ax.FontSize=10; % ax.GridLineWidth=2;
+            ax=fig.CurrentAxes; ax.FontSize=fs; % ax.GridLineWidth=2;
             
             % Set the linewidth for the plot
-            plt.LineWidth=2;
+            plt.LineWidth=lw;
         end
         % Set the title
-        sgtitle(['log2(tol) =' num2str(log2(tol(t)),'%d')]);
+        sgtitle(['log_2(tol) =' num2str(log2(tol(t)),'%d')]);
         
         % Save the figures
         fname=strcat(figpath,'maxrange_rk2_tol',...
@@ -159,10 +165,11 @@ else
         q=floor((t-1)/4); r=(t-1)-4*q;
         % Position on screen
         fig.Position=[10+r*300 650-q*600 840 height];
-        % Loop over G5, G6 and G7
-        for j=1:6
+        % Loop over the shells
+        for j=1:numshell
             % Apply Richardson extrapolation
             data(:,:,j,t)=richardson(raw_range(:,j,t),p);
+            % Only generate plots for G5, G6, G7
             if (3<=j && j<=5)
                 % Plot the fraction
                 sf=subplot(1,3,j-2); plt=plot_fraction(data(:,:,j,t),p);
@@ -170,14 +177,14 @@ else
                 sf.Title=title(tit{j});
                 
                 % Set the fontsize for the axes
-                ax=fig.CurrentAxes; ax.FontSize=10; % ax.GridLineWidth=2;
+                ax=fig.CurrentAxes; ax.FontSize=fs; % ax.GridLineWidth=2;
                 
                 % Set the linewidth for the plot
-                plt.LineWidth=2;
+                plt.LineWidth=lw;
             end
         end
         % Set the title
-        sgtitle(['log2(tol) =' num2str(log2(tol(t)),'%d')]);
+        sgtitle(['log_2(tol) =' num2str(log2(tol(t)),'%d')]);
         
         % Save the figures
         fname=strcat(figpath,'maxrange_rk2_tol',...

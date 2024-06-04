@@ -13,6 +13,15 @@ clear;
 % Logical switch
 ppam2024=true;
 
+% Height of a single row of figures in pixels
+height=300;
+
+% Line width
+lw=2;
+
+% Fontsize
+fs=16;
+
 % Define the howitzer, atmosphere, gravity
 d20;
 
@@ -112,12 +121,9 @@ end
 % Allocate space for the data
 data=zeros(kmax,4,numshell,numtol);
 
-% Height of a single row of figures in pixels
-height=300;
-
 if (ppam2024==false)
 
-    % Process all data and generate plots
+    % Process all data and generate the plots
     for t=1:numtol
         % Get a handle to a new figure
         fig=figure();
@@ -126,7 +132,7 @@ if (ppam2024==false)
         % Position on screen
         fig.Position=[10+r*300 650-q*600 840 2*height];
         % Loop over the shell types
-        for j=1:6
+        for j=1:numshell
             % Apply Richardson extrapolation
             data(:,:,j,t)=richardson(raw_range(:,j,t),p);
             % Plot the fraction
@@ -135,13 +141,13 @@ if (ppam2024==false)
             sf.Title=title(tit{j});
             
             % Set the fontsize for the axes
-            ax=fig.CurrentAxes; ax.FontSize=10; % ax.GridLineWidth=2;
+            ax=fig.CurrentAxes; ax.FontSize=fs; % ax.GridLineWidth=2;
             
             % Set the linewidth for the plot
-            plt.LineWidth=2;
+            plt.LineWidth=lw;
         end
         % Set the title
-        sgtitle(['log2(tol) =' num2str(log2(tol(t)),'%d')]);
+        sgtitle(['log_2(tol) =' num2str(log2(tol(t)),'%d')]);
         
         % Save the figures
         fname=strcat(figpath,'maxrange_rk1_tol',...
@@ -151,7 +157,7 @@ if (ppam2024==false)
     
 else
     
-    % Process all data, but only generate a subset of the plots   
+    % Process all data, but only generate plots for G5, G6, G7
     for t=1:numtol
         % Get a handle to a new figure
         fig=figure();
@@ -160,7 +166,7 @@ else
         % Position on screen
         fig.Position=[10+r*300 650-q*600 840 height];
         % Loop over the shells
-        for j=1:6
+        for j=1:numshell
             % Apply Richardson extrapolation
             data(:,:,j,t)=richardson(raw_range(:,j,t),p);
             % Only generate plots for G5, G6, G7
@@ -171,14 +177,14 @@ else
                 sf.Title=title(tit{j});
                 
                 % Set the fontsize for the axes
-                ax=fig.CurrentAxes; ax.FontSize=10; % ax.GridLineWidth=2;
+                ax=fig.CurrentAxes; ax.FontSize=fs; % ax.GridLineWidth=2;
                 
                 % Set the linewidth for the plot
-                plt.LineWidth=2;
+                plt.LineWidth=lw;
             end
         end
         % Set the title
-        sgtitle(['log2(tol) =' num2str(log2(tol(t)),'%d')]);
+        sgtitle(['log_2(tol) =' num2str(log2(tol(t)),'%d')]);
         
         % Save the figures
         fname=strcat(figpath,'maxrange_rk1_tol',...
