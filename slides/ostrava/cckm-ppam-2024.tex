@@ -29,7 +29,7 @@
 
 
 
-\graphicspath{{figures/}{data/}}
+\graphicspath{{../../report/fig/}}
 
 \beamertemplatenavigationsymbolsempty
 
@@ -120,7 +120,7 @@ This is a talk about
   \end{align}
   is solved using the SHAKE algorithm
   \begin{align}
-  \bm{v}_{n+1/2} &= \bm{v}_{n-1/2} + \bm{h} \bm{M}^{-1} \left( \bm{f}(\bm{q}_n) - \bm{G}(\bm{q}_n)^T \bm{\lambda}_n \right), \\
+  \bm{v}_{n+1/2} &= \bm{v}_{n-1/2} + \bm{h} \bm{M}^{-1} \left( \bm{f}(\bm{q}_n) - \bm{G}(\bm{q}_n)^T \bm{\lambda} \right), \\
   \bm{q}_{n+1} &= \bm{q}_n + h \bm{v}_{n + 1/2}, \\
   \bm{g}(\bm{q}_{n+1}) &= \bm{0}. \label{equ:constraint}
 \end{align}
@@ -169,6 +169,7 @@ This is a talk about
   It might be possible to assert experimentally if
   \vspace{0.5cm}
   \begin{enumerate} \setlength\itemsep{1em}
+  \item rounding errors are irrelevant
   \item your functions are sufficiently smooth
   \item your equations are solved with sufficient accuracy
   \end{enumerate}
@@ -179,7 +180,7 @@ This is a talk about
 
   \begin{enumerate} \setlength\itemsep{1em}
   \item $P$: physical quantity that can be measured
-  \item $T$: approximation of $P$ predicted by our model
+  \item $T$: approximation of $P$ predicted by our model 
   \item $A_h$: approximation of $T$ returned by our algorithm
   \item $\hat{A}_h$: the computed value of $A_h$.
   \end{enumerate}
@@ -268,7 +269,7 @@ and
 \begin{equation}
   \frac{2^p - F_h}{h^{q-p}} \rightarrow \text{constant}
 \end{equation}
-Why is this significant when the computer returns $\hat{A}_h$ and $$\hat{A}_h \not = A_h$$
+Why is this significant? The computer returns $$\hat{A}_h \not = A_h$$
 }
 
 \frame{\frametitle{An example from elementary numerical analysis}
@@ -357,15 +358,55 @@ Why is this significant when the computer returns $\hat{A}_h$ and $$\hat{A}_h \n
 
 }
 
-\frame{\frametitle{What can kill an AEX?}
+\frame{\frametitle{When do we have an AEX?}
 
-  
-
+  Deriving an AEX is an exercise in Taylor expansions. If
+  \begin{center}
+    our functions are not many times differentiable
+  \end{center}
+  then the foundation crumbles.
+  \vspace{1cm}
+    \newline
+  Every AEX refers to the exact value of the $A_h$. If
+  $$\hat{A}_h \approx A_h$$
+  is not a good approximation, then
+  \begin{center}
+    $\hat{A}_h$ will not behave nicely
+  \end{center}
 }
 
+\frame{\frametitle{External ballistics: Accurate event location}
 
+  \begin{figure}
+    \includegraphics[width=10cm]{maxrange_rk1_tol53.pdf}
+    \caption{RK1: The time to impact is computed with tolerance $\tau = 2^{-53}$. We can identify the asymptotic range and we trust the error estimate.}
+  \end{figure}
+}
 
+\frame{\frametitle{External ballistics: Inaccurate event location}
 
+  \begin{figure}
+    \includegraphics[width=10cm]{maxrange_rk2_tol11.pdf}
+    \caption{RK2: The time to impact is computed with tolerance $\tau = 2^{-11}$ and we cannot locate the asymptotic range nor trust the error estimate.}
+  \end{figure}
+}
+
+\frame{\frametitle{External ballistics: Sufficiently event location}
+
+  \begin{figure}
+    \includegraphics[width=10cm]{maxrange_rk2_tol25.pdf}
+    \caption{RK2: The time to impact is computed with tolerance $\tau = 2^{-25}$ and the asymptotic range begins to emerge}
+  \end{figure}
+}
+
+\frame{\frametitle{Molecular dynamics: Truncation of force-fields}
+
+  \begin{itemize}
+  \item Simple simulation with 4 ions
+  \item Each ion is attached to the origin with a spring
+  \item The electrostatic forcefields are trunctated.
+  \end{itemize}
+}   
 
 \frame{\frametitle{Why should this concern the PPAM community?}
 
