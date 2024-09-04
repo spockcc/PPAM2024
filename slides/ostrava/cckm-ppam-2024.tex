@@ -79,35 +79,65 @@ This is a talk about
 \end{center}
 }
 
-\frame{\frametitle{External ballistics}
+\frame{\frametitle{Warning: Disturbing pictures to follow}
 
-  \includegraphics[width=12cm]{range_rk1_mwe2.pdf}
+  We did two sets of simulations of a molecule in water
+  \vspace{1cm}
+  \begin{enumerate} \setlength\itemsep{1em}
+    \item fixed real time
+    \item two different force-fields: \texttt{charmm36}, \texttt{oopsaal}
+    \item identical initial conditions
+   \end{enumerate}
+  \vspace{1cm}
+  and tracked the energy as a function of the number of steps.
 
-  The total force $\bm{F}$ acting on the shell 
-  \begin{equation}
-    \bm{F} = m \bm{g} - \frac{1}{2} \rho(y) A C_D(\nu,y) \|\bm{v} - \bm{w}\|_2 ( \bm{v} - \bm{w} )
-  \end{equation}
-  is the combination of gravity and aerodynamic drag.
 }
 
-\frame{\frametitle{External ballistics}
+\frame{\frametitle{Warning: Disturbing pictures below}
 
-\begin{block}{Key questions}
-  Does it matter
-  \begin{enumerate}
-  \item if the drag coefficient
-    \begin{equation*}
-      \nu \rightarrow C_D(\nu)
-    \end{equation*}
-    is smooth or not?
-  \item if the event equation
-    \begin{equation*}
-      y(t) = 0
-    \end{equation*}
-    is solved accurately or not?
-      \end{enumerate}
- \end{block}
+ \begin{figure}
+    \includegraphics[width=8cm]{oplsaaltol12.pdf}
+  \end{figure}
+
+  \begin{figure}
+    \includegraphics[width=8cm]{charmm36tol12.pdf}
+  \end{figure}
+
 }
+
+
+
+
+%% \frame{\frametitle{External ballistics}
+
+%%   \includegraphics[width=12cm]{range_rk1_mwe2.pdf}
+
+%%   The total force $\bm{F}$ acting on the shell 
+%%   \begin{equation}
+%%     \bm{F} = m \bm{g} - \frac{1}{2} \rho(y) A C_D(\nu,y) \|\bm{v} - \bm{w}\|_2 ( \bm{v} - \bm{w} )
+%%   \end{equation}
+%%   is the combination of gravity and aerodynamic drag.
+%% }
+
+
+%% \frame{\frametitle{External ballistics}
+
+%% \begin{block}{Key questions}
+%%   Does it matter
+%%   \begin{enumerate}
+%%   \item if the drag coefficient
+%%     \begin{equation*}
+%%       \nu \rightarrow C_D(\nu)
+%%     \end{equation*}
+%%     is smooth or not?
+%%   \item if the event equation
+%%     \begin{equation*}
+%%       y(t) = 0
+%%     \end{equation*}
+%%     is solved accurately or not?
+%%       \end{enumerate}
+%%  \end{block}
+%% }
 
 
 \frame{\frametitle{Molecular dynamics}
@@ -164,15 +194,16 @@ This is a talk about
   \vspace{1cm}
 }
 
-\frame{\frametitle{The secondary point of this talk}
 
-  It might be possible to assert experimentally if
-  \vspace{0.5cm}
-  \begin{enumerate} \setlength\itemsep{1em}
-  \item your functions are sufficiently smooth
-  \item your equations are solved with sufficient accuracy
-  \end{enumerate}
-}
+%% \frame{\frametitle{The secondary point of this talk}
+
+%%   It might be possible to assert experimentally if
+%%   \vspace{0.5cm}
+%%   \begin{enumerate} \setlength\itemsep{1em}
+%%   \item your functions are sufficiently smooth
+%%   \item your equations are solved with sufficient accuracy
+%%   \end{enumerate}
+%% }
 
 
 \frame{\frametitle{The key terms of this talk}
@@ -214,6 +245,12 @@ This is a talk about
   \end{equation}
   is a good approximation, but
   \begin{equation}
+    P - T \approx P - \hat{A}_h
+  \end{equation}
+  is not necessarily a good approximation. We have
+
+  
+  \begin{equation}
     P - T = (P - \hat{A}_h) - (T - A_h) - (A_h - \hat{A}_h)
   \end{equation}
   so we need to assert that
@@ -221,11 +258,6 @@ This is a talk about
     |T- A_h| & \ll |P - \hat{A}_h| \\
     |A_h - \hat{A}_h| & \ll |P - \hat{A}_h|
   \end{align}
-  before we are certain that
-  \begin{equation}
-    P - T \approx P - \hat{A}_h
-  \end{equation}
-  is a good approximation.
 }
 
 \frame{\frametitle{Practical error estimation}
@@ -268,7 +300,11 @@ and
 \begin{equation}
   \frac{2^p - F_h}{h^{q-p}} \rightarrow \text{constant}
 \end{equation}
-Why is this significant when the computer returns $\hat{A}_h$ and $$\hat{A}_h \not = A_h$$
+which implies
+\begin{equation}
+  \log | 2^p - F_h| \approx \log|\text{constant}| + (q-p) \log h
+\end{equation}
+
 }
 
 \frame{\frametitle{An example from elementary numerical analysis}
@@ -314,14 +350,16 @@ Why is this significant when the computer returns $\hat{A}_h$ and $$\hat{A}_h \n
 
 \frame{\frametitle{A spectacular failure}
 
-  We used GROMACS to simulate the motion of hen egg white lysozyme submerged in water.
+  GROMACS simulation of hen egg white lysozyme in water:
+  \vspace{0.25cm}
   \begin{enumerate} \setlength\itemsep{1em}
   \item $T$: total energy of the simulation at the end
   \item $A_h$: the approximation of $T$ computed using SHAKE
   \item $\hat{A}_h$: the value of $A_h$ returned by the computer
   \end{enumerate}
 \vspace{0.5cm}
-  Temporal matters:
+Temporal matters:
+\vspace{0.25cm}
   \begin{enumerate}
   \item The length of the simulations was $10^{-12}$ s ($1$ ps)
   \item A common step size in MD is $10^{-15} s$ ($1$ fs)
@@ -335,7 +373,7 @@ Why is this significant when the computer returns $\hat{A}_h$ and $$\hat{A}_h \n
 \frame{\frametitle{A spectacular failure}
 
   \begin{figure}
-    \includegraphics[width=12cm]{oplsaaltol12.pdf}
+    \includegraphics[width=10cm]{oplsaaltol12.pdf}
   \end{figure}
    The rapid growth of the energy for large value of $n$ 
     \begin{center}
@@ -352,19 +390,65 @@ Why is this significant when the computer returns $\hat{A}_h$ and $$\hat{A}_h \n
   \begin{itemize}
   \item The \underline{wiggles} near $n=1000$ steps are a great concern.
   \item If there is an AEX, then $1$ fs is \underline{not} inside the asymp. range.
-  \item We cannot quantifty the effect of changing the force-field.
+  \item We cannot assert that rounding errors are irrelevant
+  \item We cannot estimate the discretication error
   \end{itemize}
 
 }
 
-\frame{\frametitle{What can kill an AEX?}
+\frame{\frametitle{What can go wrong?}
 
-  
-
+  \begin{enumerate}\setlength\itemsep{1.5em}
+  \item Proving the existence of an AEX is an exercise in
+    \begin{center}
+      Taylor expansion
+    \end{center}
+    We cannot complete the proof unless
+    \begin{center}
+      the functions are sufficiently smooth.
+      \end{center}
+    \item We cannot expect $\hat{A}_h$ to behave as predicted by the AEX unless
+    $$ \hat{A}_h \approx A_h $$
+    is a good approximation
+    \end{enumerate}
 }
 
 
 
+\frame{\frametitle{External ballistics}
+
+  \includegraphics[width=12cm]{range_rk1_mwe2.pdf}
+
+  The total force $\bm{F}$ acting on the shell 
+  \begin{equation}
+    \bm{F} = m \bm{g} - \frac{1}{2} \rho(y) A C_D(\nu,y) \|\bm{v} - \bm{w}\|_2 ( \bm{v} - \bm{w} )
+  \end{equation}
+  is the combination of gravity and aerodynamic drag.
+}
+
+\frame{\frametitle{Computing the optimal range of the a howitzer}
+
+ \begin{figure}
+    \includegraphics[width=10cm]{maxrange_rk1_tol18.pdf} \caption{The evolution of Richardson's fraction for 3 different drag coeffients, Euler's explicit method and sufficiently accurate event location.}
+  \end{figure}
+
+}
+
+
+\frame{\frametitle{Computing the optimal range of the a howitzer}
+
+ \begin{figure}
+    \includegraphics[width=10cm]{maxrange_rk1_tol11.pdf} \caption{The evolution of Richardson's fraction for 3 different drag coeffients, Euler's explicit method and inaccurate event location.}
+  \end{figure}
+ 
+}
+
+\frame{\frametitle{Modelling ions}
+
+
+
+
+}
 
 
 \frame{\frametitle{Why should this concern the PPAM community?}
