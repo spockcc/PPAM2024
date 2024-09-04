@@ -29,7 +29,7 @@
 
 
 
-\graphicspath{{figures/}{data/}}
+\graphicspath{{../../report/fig/}}
 
 \beamertemplatenavigationsymbolsempty
 
@@ -150,7 +150,7 @@ This is a talk about
   \end{align}
   is solved using the SHAKE algorithm
   \begin{align}
-  \bm{v}_{n+1/2} &= \bm{v}_{n-1/2} + \bm{h} \bm{M}^{-1} \left( \bm{f}(\bm{q}_n) - \bm{G}(\bm{q}_n)^T \bm{\lambda}_n \right), \\
+  \bm{v}_{n+1/2} &= \bm{v}_{n-1/2} + \bm{h} \bm{M}^{-1} \left( \bm{f}(\bm{q}_n) - \bm{G}(\bm{q}_n)^T \bm{\lambda} \right), \\
   \bm{q}_{n+1} &= \bm{q}_n + h \bm{v}_{n + 1/2}, \\
   \bm{g}(\bm{q}_{n+1}) &= \bm{0}. \label{equ:constraint}
 \end{align}
@@ -195,8 +195,8 @@ This is a talk about
 }
 
 
-%% \frame{\frametitle{The secondary point of this talk}
 
+%% \frame{\frametitle{The secondary point of this talk}
 %%   It might be possible to assert experimentally if
 %%   \vspace{0.5cm}
 %%   \begin{enumerate} \setlength\itemsep{1em}
@@ -210,7 +210,7 @@ This is a talk about
 
   \begin{enumerate} \setlength\itemsep{1em}
   \item $P$: physical quantity that can be measured
-  \item $T$: approximation of $P$ predicted by our model
+  \item $T$: approximation of $P$ predicted by our model 
   \item $A_h$: approximation of $T$ returned by our algorithm
   \item $\hat{A}_h$: the computed value of $A_h$.
   \end{enumerate}
@@ -304,7 +304,6 @@ which implies
 \begin{equation}
   \log | 2^p - F_h| \approx \log|\text{constant}| + (q-p) \log h
 \end{equation}
-
 }
 
 \frame{\frametitle{An example from elementary numerical analysis}
@@ -322,6 +321,7 @@ which implies
     h = h_k = 2^{-k}
   \end{equation}
 }
+
 
 \frame{\frametitle{The evolution of $F_h$ and the quality of $R_h$}
 
@@ -396,23 +396,23 @@ Temporal matters:
 
 }
 
-\frame{\frametitle{What can go wrong?}
 
-  \begin{enumerate}\setlength\itemsep{1.5em}
-  \item Proving the existence of an AEX is an exercise in
-    \begin{center}
-      Taylor expansion
-    \end{center}
-    We cannot complete the proof unless
-    \begin{center}
-      the functions are sufficiently smooth.
-      \end{center}
-    \item We cannot expect $\hat{A}_h$ to behave as predicted by the AEX unless
-    $$ \hat{A}_h \approx A_h $$
-    is a good approximation
-    \end{enumerate}
+\frame{\frametitle{When do we have an AEX?}
+
+  Deriving an AEX is an exercise in Taylor expansions. If
+  \begin{center}
+    our functions are not many times differentiable
+  \end{center}
+  then the foundation crumbles.
+  \vspace{1cm}
+    \newline
+  Every AEX refers to the exact value of the $A_h$. If
+  $$\hat{A}_h \approx A_h$$
+  is not a good approximation, then
+  \begin{center}
+    $\hat{A}_h$ will not behave nicely
+  \end{center}
 }
-
 
 
 \frame{\frametitle{External ballistics}
@@ -425,6 +425,7 @@ Temporal matters:
   \end{equation}
   is the combination of gravity and aerodynamic drag.
 }
+
 
 \frame{\frametitle{Computing the optimal range of the a howitzer}
 
@@ -446,9 +447,18 @@ Temporal matters:
 \frame{\frametitle{Modelling ions}
 
 
-
-
 }
+
+
+
+\frame{\frametitle{Molecular dynamics: Truncation of force-fields}
+
+  \begin{itemize}
+  \item Simple simulation with 4 ions
+  \item Each ion is attached to the origin with a spring
+  \item The electrostatic forcefields are trunctated.
+  \end{itemize}
+}   
 
 
 \frame{\frametitle{Why should this concern the PPAM community?}
