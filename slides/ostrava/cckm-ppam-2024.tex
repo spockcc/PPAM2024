@@ -29,7 +29,7 @@
 
 
 
-\graphicspath{{../../report/fig/}}
+\graphicspath{{../fig/}{../../report/fig/}}
 
 \beamertemplatenavigationsymbolsempty
 
@@ -79,7 +79,7 @@ This is a talk about
 \end{center}
 }
 
-\frame{\frametitle{Warning: Disturbing pictures to follow}
+\frame{\frametitle{A simple experiment}
 
   We did two sets of simulations of a molecule in water
   \vspace{1cm}
@@ -87,20 +87,21 @@ This is a talk about
     \item fixed real time
     \item two different force-fields: \texttt{charmm36}, \texttt{oopsaal}
     \item identical initial conditions
+    \item ran the constraint solver to stagnation
    \end{enumerate}
   \vspace{1cm}
-  and tracked the energy as a function of the number of steps.
+  and tracked the final energy as a function of the number of steps.
 
 }
 
-\frame{\frametitle{Warning: Disturbing pictures below}
+\frame{% \frametitle{Warning: Disturbing pictures below}
 
  \begin{figure}
-    \includegraphics[width=8cm]{oplsaaltol12.pdf}
+    \includegraphics[width=10.5cm]{oplsaaltol12.pdf}
   \end{figure}
 
   \begin{figure}
-    \includegraphics[width=8cm]{charmm36tol12.pdf}
+    \includegraphics[width=10.5cm]{charmm36tol12.pdf}
   \end{figure}
 
 }
@@ -140,7 +141,7 @@ This is a talk about
 %% }
 
 
-\frame{\frametitle{Molecular dynamics}
+\frame{\frametitle{Molecular dynamics with constraints}
 
   The system of differential algebraic equations
   \begin{align}
@@ -159,17 +160,17 @@ This is a talk about
 \frame{\frametitle{Molecular dynamics}
 
   \begin{block}{Key questions}
-    Does it matter
-    \begin{enumerate}
+    Does it matter\vspace{0.5cm}
+    \begin{enumerate}\setlength\itemsep{1.5em}
     \item if the force-field 
       \begin{equation*}
         \bm{q} \rightarrow \bm{f}(\bm{q})
       \end{equation*}
       is smooth or not?
     \item if the nonlinear constraint equation
-      \begin{equation}
+      \begin{equation*}
         \bm{g}(\bm{q}_{n+1}(\bm{\lambda})) = \bm{0}
-      \end{equation}
+      \end{equation*}
       is solved accurately with respect to $\bm{\lambda}$ or not?
     \end{enumerate}
   \end{block}
@@ -185,11 +186,12 @@ This is a talk about
   \item the central equations are not solved accurately enough
   \end{enumerate}
   \vspace{0.5cm}
-  then we cannot:
+  then we may lose the ability to
   \vspace{0.5cm}
   \begin{enumerate}
-  \item estimate the modelling error
-  \item validate the model against the physical reality
+  \item assert that rounding errors are irrelevant
+  \item estimate the discretization error
+  \item compare the model against the physical reality
   \end{enumerate}
   \vspace{1cm}
 }
@@ -248,8 +250,6 @@ This is a talk about
     P - T \approx P - \hat{A}_h
   \end{equation}
   is not necessarily a good approximation. We have
-
-  
   \begin{equation}
     P - T = (P - \hat{A}_h) - (T - A_h) - (A_h - \hat{A}_h)
   \end{equation}
@@ -263,7 +263,8 @@ This is a talk about
 \frame{\frametitle{Practical error estimation}
 
   It is frequently possible to simultanously
-  \begin{enumerate}
+   \vspace{0.5cm}
+  \begin{enumerate} \setlength\itemsep{1.5em}
   \item assert that the computational error
     \begin{equation*}
       A_h - \hat{A}_h
@@ -275,12 +276,22 @@ This is a talk about
     \end{equation*}
     accurately
   \end{enumerate}
-  The key is the existence of an asymptotic error expansion
+}
+
+\frame{\frametitle{Practical error estimation}
+
+ 
+  The key is to have an asymptotic error expansion (AEX)
   \begin{equation}
     E_h = T - A_h = \alpha h^p + \beta h^q + O(h^r), \quad h \rightarrow 0_+
   \end{equation}
-  where $0 < p < q < r$.
+  where
+  \begin{equation}
+    0 < p < q < r
+  \end{equation}
+  are not necessarily integers.
 }
+
 
 \frame{\frametitle{Elementary results}
 
@@ -288,11 +299,7 @@ Define
 \begin{equation}
   R_h := \frac{A_h - A_{2h}}{2^p - 1}, \quad F_h:= \frac{A_{2h} - A_{4h}}{A_h - A_{2h}} 
 \end{equation}
-If 
-\begin{equation}
-  E_h = T - A_h = \alpha h^p + \beta h^q + O(h^r), \quad h \rightarrow 0_+
-\end{equation}
-then
+Then
 \begin{equation}
   \frac{E_h - R_h}{h^q} \rightarrow \text{constant}
 \end{equation}
@@ -344,8 +351,10 @@ which implies
   \begin{center}
     we are observing $\hat{F}_h$ and $\hat{R}_h$
   \end{center}
-  The discrepancy is controlled by the computational error
-  $$ A_h - \hat{A}_h$$
+  The difference is controlled by the computational error
+  \begin{equation}
+    A_h - \hat{A}_h
+  \end{equation}
 }
 
 \frame{\frametitle{A spectacular failure}
@@ -362,11 +371,12 @@ Temporal matters:
 \vspace{0.25cm}
   \begin{enumerate}
   \item The length of the simulations was $10^{-12}$ s ($1$ ps)
-  \item A common step size in MD is $10^{-15} s$ ($1$ fs)
+  \item A common step size in MD is $10^{-15} s$ ($1$ fs) or $n=1000$ steps
+  \item $n \in \{250,500,1000:100:2000,3000:1000:16000\}$
   \end{enumerate}
   
   \begin{center}
-    So, a mere 1000 steps! What could possibly go wrong?
+   What could possibly go wrong?
   \end{center}
 }
 
@@ -399,19 +409,24 @@ Temporal matters:
 
 \frame{\frametitle{When do we have an AEX?}
 
-  Deriving an AEX is an exercise in Taylor expansions. If
-  \begin{center}
-    our functions are not many times differentiable
-  \end{center}
-  then the foundation crumbles.
-  \vspace{1cm}
-    \newline
-  Every AEX refers to the exact value of the $A_h$. If
-  $$\hat{A}_h \approx A_h$$
-  is not a good approximation, then
-  \begin{center}
-    $\hat{A}_h$ will not behave nicely
-  \end{center}
+  \begin{enumerate} \setlength\itemsep{1.5em}
+  \item Every AEX refers to the exact value of the $A_h$. If
+    $$\hat{A}_h \approx A_h$$
+    is not a good approximation, then
+    \vspace{0.25cm}
+    \begin{center}
+      $\hat{A}_h$ will not behave nicely
+    \end{center}
+    \vspace{0.25cm}
+    and we cannot identify the asymptotic range.
+  \item Deriving an AEX is an exercise in Taylor expansions. If
+    \vspace{0.25cm}
+    \begin{center}
+      our functions are not many times differentiable
+    \end{center}
+    \vspace{0.25cm}
+    then the foundation crumbles.
+  \end{enumerate}
 }
 
 
@@ -427,44 +442,64 @@ Temporal matters:
 }
 
 
-\frame{\frametitle{Computing the optimal range of the a howitzer}
+\frame{\frametitle{Computing the optimal range of the a howitzer: Success}
 
  \begin{figure}
-    \includegraphics[width=10cm]{maxrange_rk1_tol18.pdf} \caption{The evolution of Richardson's fraction for 3 different drag coeffients, Euler's explicit method and sufficiently accurate event location.}
+    \includegraphics[width=10cm]{maxrange_rk1_tol18.pdf} \caption{The evolution of $F_h$ for 3 different drag coeffients, 1st order Runge-Kutta and sufficiently accurate event location.}
   \end{figure}
 
 }
 
 
-\frame{\frametitle{Computing the optimal range of the a howitzer}
+\frame{\frametitle{Computing the optimal range of the a howitzer: Failure}
 
  \begin{figure}
-    \includegraphics[width=10cm]{maxrange_rk1_tol11.pdf} \caption{The evolution of Richardson's fraction for 3 different drag coeffients, Euler's explicit method and inaccurate event location.}
+    \includegraphics[width=10cm]{maxrange_rk2_tol18.pdf} \caption{The evolution of $F_h$ for 3 different drag coeffients, 2nd order Runge-Kutta and inaccurate event location.}
   \end{figure}
  
 }
 
-\frame{\frametitle{Modelling ions}
+
+\frame{\frametitle{Modelling ions: Setup}
+
+  The total force on an ion is
+  \begin{equation}
+    \bm{F}(\bm{r_i}) =  - \alpha \sum_{j \not = i} \frac{1}{\|\bm{r}_i - \bm{r}_j\|^3}(\bm{r}_i - \bm{r}_j) - \beta \bm{r_i} - \gamma \bm{v}_i
+  \end{equation}
+  We measure the total kinetic energy $A_h$ at a fixed time as function of the stepsize $h_k = 2^{-k} h_0$. 
+}
+
+\frame{\frametitle{Modelling ions: Success}
+
+   \begin{figure}
+     \includegraphics[width=10cm]{iontrap_mwe1.pdf}
+     \caption{The evolution of $F_h$ for Runge-Kutta methods of order $p \in \{1,2,3,4\}$ and smooth force-fields with infinite range.}
+  \end{figure}
+}
 
 
+\frame{\frametitle{Modelling ions: Failure}
+ \begin{figure}
+    \includegraphics[width=10cm]{iontrap_mwe2.pdf} \caption{The evolution of $F_h$ for Runge-Kutta methods of order $p \in \{1,2,3,4\}$ and truncated force-fields with jump discontinuities.}
+  \end{figure}
+}
+
+\frame{\frametitle{Modelling ions: Success}
+ \begin{figure}
+    \includegraphics[width=10cm]{iontrap_mwe4.pdf} \caption{The evolution of $F_h$ for Runge-Kutta methods of order $p \in \{1,2,3,4\}$ and smoothly truncated force-fields.}
+  \end{figure}
 }
 
 
 
-\frame{\frametitle{Molecular dynamics: Truncation of force-fields}
-
-  \begin{itemize}
-  \item Simple simulation with 4 ions
-  \item Each ion is attached to the origin with a spring
-  \item The electrostatic forcefields are trunctated.
-  \end{itemize}
-}   
 
 
+  
 \frame{\frametitle{Why should this concern the PPAM community?}
 
   We use every trick in the book to
-  \begin{enumerate}
+  \vspace{0.5cm}
+  \begin{enumerate} \setlength\itemsep{1.5em}
   \item reduce time-to-solution
   \item increase the parallel efficicency
   \item reduce energy-to-solution
@@ -472,7 +507,9 @@ Temporal matters:
   \vspace{1cm}
   We should not forget to ask the question:
   \begin{center}
-    Did we just compromise our ability to validate our models against the real world?
+    \begin{large}
+      \textbf{Can we still validate our models against the real world?}
+    \end{large}
   \end{center}
 }
 

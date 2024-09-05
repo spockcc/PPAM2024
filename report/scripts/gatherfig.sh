@@ -10,6 +10,7 @@ ps2pdf -DEPSCrop maxrange_rk1_tol11.eps maxrange_rk1_tol11.pdf
 ps2pdf -DEPSCrop maxrange_rk1_tol18.eps maxrange_rk1_tol18.pdf
 ps2pdf -DEPSCrop maxrange_rk1_tol53.eps maxrange_rk1_tol53.pdf
 ps2pdf -DEPSCrop maxrange_rk2_tol11.eps maxrange_rk2_tol11.pdf
+ps2pdf -DEPSCrop maxrange_rk2_tol18.eps maxrange_rk2_tol18.pdf
 ps2pdf -DEPSCrop maxrange_rk2_tol25.eps maxrange_rk2_tol25.pdf
 ps2pdf -DEPSCrop charmm36tol04.eps charmm36tol04.pdf
 ps2pdf -DEPSCrop charmm36tol12.eps charmm36tol12.pdf
