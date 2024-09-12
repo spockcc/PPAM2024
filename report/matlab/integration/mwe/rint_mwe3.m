@@ -22,7 +22,7 @@ rule=@(y,a,b,N)trapezoid(y,a,b,N);
 % The value below is wrong!!! The function is not smooth enough!
 % p=2;
 % The value below is correct!
-p = 1.5 
+p=1.5; 
 
 % Number of refinements
 kmax=26; 
