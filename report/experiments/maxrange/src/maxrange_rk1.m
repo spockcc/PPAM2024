@@ -10,8 +10,10 @@
 % Clear the work space
 clear;
 
-% Logical switch
-ppam2024=true;
+% Logical switch:
+%  ppam2024=true   generate the figures that fit in the manuscript
+%  ppam2024=false  generate all figures 
+ppam2024=false;
 
 % Height of a single row of figures in pixels
 height=300;

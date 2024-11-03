@@ -32,7 +32,7 @@ rule=@(y,a,b,N)trapezoid(y,a,b,N);
 p=2; 
 
 % Number of approximations
-kmax=20; 
+kmax=26; 
 
 % True value of the integral 
 val=F(b)-F(a);
