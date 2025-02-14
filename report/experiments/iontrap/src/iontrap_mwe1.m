@@ -91,7 +91,7 @@ if ~isfile(dname)
     N1=512;
 
     % Number of approximations A_h
-    kmax=12;
+    kmax=6;
 
     % Allocate space for the raw data
     raw=zeros(2*ld,N1+1,kmax,nm);

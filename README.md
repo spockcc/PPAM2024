@@ -1,6 +1,6 @@
 This repository contains all software and data necessary to replicated every number, table and figure printed in the manuscript "The need for accuracy and smoothness in numerical simulations".
 This manuscript has been submitted to the conference Parallel Processing and Applied Mathematics, PPAM-2024.
-The authors are Carl Chrisian Kjelgaard Mikkelsen (spock@cs.umu.se) from Umeaa University, Sweden and Lorién López-Villellas (lorien.lopez@unizar.es) from University of Zaragoza, Spain.
+The authors are Carl Chrisian Kjelgaard Mikkelsen from Umeaa University, Sweden and Lorién López-Villellas from University of Zaragoza, Spain.
 
 The reader who wishes to replicate the experiments or examine the output in greater detail should clone the repository.
 
